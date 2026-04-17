@@ -5,6 +5,8 @@
   "scripts": {
     "build": "tsdown",
     "check-types": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server"
   },
   "dependencies": {
@@ -21,6 +23,8 @@
     "alchemy": "catalog:",
     "tsdown": "^0.16.5",
     "typescript": "catalog:",
-    "wrangler": "^4.77.0"
+    "wrangler": "^4.77.0",
+    "vitest": "^3.0.0",
+    "@cloudflare/vitest-pool-workers": "^0.9.0"
   }
 }

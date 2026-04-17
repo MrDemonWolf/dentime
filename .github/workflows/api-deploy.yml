@@ -30,7 +30,6 @@ jobs:
 
       - name: Run server tests
         run: bun run --cwd apps/server test
-        continue-on-error: true  # harness not wired yet - Phase 1 cleanup
 
       - name: Deploy via alchemy
         run: bun run deploy
