@@ -1,0 +1,8 @@
+DenTime.xcodeproj/
+.build/
+.swiftpm/
+*.xcworkspace/
+!default.xcworkspace/
+*.xcuserdata/
+DerivedData/
+.DS_Store
