@@ -1,0 +1,17 @@
+import { defineWorkersConfig } from "@cloudflare/vitest-pool-workers/config";
+
+export default defineWorkersConfig({
+  test: {
+    poolOptions: {
+      workers: {
+        miniflare: {
+          compatibilityDate: "2025-01-01",
+          compatibilityFlags: ["nodejs_compat"],
+          bindings: {
+            CORS_ORIGIN: "http://localhost:3001",
+          },
+        },
+      },
+    },
+  },
+});
