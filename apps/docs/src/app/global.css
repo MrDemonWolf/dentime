@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+@theme inline {
+	--color-brand-navy: #091533;
+	--color-brand-cyan: #0faced;
+	--color-fd-primary: var(--color-brand-cyan);
+	--color-fd-accent: var(--color-brand-cyan);
+}
+
+:root {
+	--color-fd-background: #ffffff;
+	--color-fd-foreground: #0a0f1f;
+}
+
+.dark {
+	--color-fd-background: #091533;
+	--color-fd-foreground: #e6edf5;
+	--color-fd-card: #0c1a3d;
+	--color-fd-muted: #0c1a3d;
+	--color-fd-muted-foreground: #94a3b8;
+	--color-fd-border: #1a2a52;
+}

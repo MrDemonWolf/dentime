@@ -1,0 +1,49 @@
+# ── Dependencies ────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Build Outputs ────────────────────────────────────────────────────────────
+dist/
+.next/
+.turbo/
+tsconfig.tsbuildinfo
+.source/
+out/
+
+# ── Environment ──────────────────────────────────────────────────────────────
+.env
+.env.*
+
+# ── IDE & Editor ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Swift / Xcode ────────────────────────────────────────────────────────────
+# XcodeGen generates the project; don't commit it.
+apps/macOS/DenTime.xcodeproj/
+**/xcuserdata/
+**/DerivedData/
+**/build/
+*.xcarchive
+*.ipa
+*.pkg
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+Package.resolved
+
+# CocoaPods / Carthage (not used, but guard)
+Pods/
+Carthage/Build/
+
+# ── Tooling state ────────────────────────────────────────────────────────────
+.claude/worktrees/

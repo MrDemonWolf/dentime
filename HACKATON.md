@@ -94,6 +94,7 @@ See `CC-MVP2.md` for all of these.
 ## 🛠 Tech (the non-negotiables)
 
 ### macOS app
+
 - Swift 5.9+, SwiftUI only
 - macOS 13+ (needs `MenuBarExtra`)
 - No dependencies (Foundation + SwiftUI)
@@ -101,6 +102,7 @@ See `CC-MVP2.md` for all of these.
 - Bundle: `com.mrdemonwolf.dentime`
 
 ### Docs site
+
 - Fumadocs + Next.js 15 (static export)
 - TypeScript strict
 - Tailwind

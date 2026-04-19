@@ -3,11 +3,6 @@ name: Apple TestFlight
 on:
   workflow_dispatch:
     inputs:
-      platform:
-        description: Platform to build
-        required: true
-        type: choice
-        options: [iOS, macOS]
       version:
         description: Marketing version (e.g. 0.1.0)
         required: true
@@ -21,13 +16,13 @@ jobs:
   build:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install XcodeGen
         run: brew install xcodegen
 
       - name: Generate Xcode project
-        working-directory: apple
+        working-directory: apps/macOS
         run: xcodegen generate
 
       - name: Import signing certificate
@@ -44,30 +39,30 @@ jobs:
 
       - name: Install provisioning profile
         env:
-          PROVISION_P8: ${{ secrets.APPLE_PROVISION_PROFILE }}
+          PROVISION: ${{ secrets.APPLE_PROVISION_PROFILE }}
         run: |
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          echo "$PROVISION_P8" | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/DenTime.mobileprovision
+          echo "$PROVISION" | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/DenTime.provisionprofile
 
       - name: Set version numbers
-        working-directory: apple
+        working-directory: apps/macOS
         run: |
-          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ inputs.version }}" DenTime/Info-${{ inputs.platform }}.plist
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ inputs.build }}" DenTime/Info-${{ inputs.platform }}.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ inputs.version }}" DenTime/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ inputs.build }}" DenTime/Info.plist
 
       - name: Archive
-        working-directory: apple
+        working-directory: apps/macOS
         run: |
           xcodebuild \
             -project DenTime.xcodeproj \
-            -scheme DenTime-${{ inputs.platform }} \
+            -scheme DenTime \
             -configuration Release \
             -archivePath build/DenTime.xcarchive \
-            -destination "generic/platform=${{ inputs.platform == 'iOS' && 'iOS' || 'macOS' }}" \
+            -destination "generic/platform=macOS" \
             archive
 
-      - name: Export IPA / PKG
-        working-directory: apple
+      - name: Export PKG
+        working-directory: apps/macOS
         run: |
           cat > ExportOptions.plist <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
@@ -89,14 +84,14 @@ jobs:
             -exportPath build/export
 
       - name: Upload to App Store Connect
-        working-directory: apple
+        working-directory: apps/macOS
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_PW: ${{ secrets.APPLE_APP_SPECIFIC_PW }}
         run: |
-          FILE=$(ls build/export/*.ipa build/export/*.pkg 2>/dev/null | head -1)
+          FILE=$(ls build/export/*.pkg 2>/dev/null | head -1)
           xcrun altool --upload-app \
-            --type ${{ inputs.platform == 'iOS' && 'ios' || 'osx' }} \
+            --type osx \
             --file "$FILE" \
             --username "$APPLE_ID" \
             --password "$APPLE_APP_PW"

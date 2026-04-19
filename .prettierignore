@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.next/
+.turbo/
+.source/
+out/
+bun.lock
+*.lock
+
+# Swift / Xcode
+**/*.xcodeproj/
+**/*.xcworkspace/
+**/DerivedData/
+**/build/
+**/*.xcarchive/
+
+# Generated assets
+apps/macOS/DenTime/Resources/Assets.xcassets/AppIcon.appiconset/*.png

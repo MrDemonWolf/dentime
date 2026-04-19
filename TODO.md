@@ -207,6 +207,7 @@ Once Claude Code says MVP1 is done and has committed + pushed everything, ask it
 ✅ **Verify:** Landing page loads with paw tick logo.
 
 If it doesn't:
+
 - Check `github.com/MrDemonWolf/dentime/actions` for the deploy workflow status
 - Check `github.com/MrDemonWolf/dentime/settings/pages` — Source should be "GitHub Actions"
 
@@ -233,9 +234,9 @@ Otherwise, manual:
 - [ ] Atlassian → Projects → Create → Kanban
 - [ ] Name: `DenTime` · Key: `DEN`
 - [ ] Add epics:
-  - `Hackathon — MVP1 macOS + Docs`
-  - `MVP2 — API + iOS + Meetups`
-  - `MVP3 — Calendar integrations`
+    - `Hackathon — MVP1 macOS + Docs`
+    - `MVP2 — API + iOS + Meetups`
+    - `MVP3 — Calendar integrations`
 
 ### Step 7.4 — Google Drive (optional) ⏱ 3 min
 
@@ -280,15 +281,15 @@ Paste:
 
 After you unzip:
 
-| File | What it's for | When to read |
-|---|---|---|
-| `HACKATON.md` | What we're building, in plain English | Right now |
-| `TODO.md` | This file — your checklist | Right now |
-| `CC-MVP1.md` | Full build plan for Claude Code | Paste into Claude Code at Step 6.2 |
-| `CC-MVP2.md` | Future build plan | Ignore until MVP1 ships |
-| `assets/logo.svg` | Color paw tick logo | Claude Code uses this |
-| `assets/logo-mono.svg` | Monochrome menu bar logo | Claude Code uses this |
-| `START_HERE.md` | Quick run-order summary | Read if you forget what to do |
+| File                   | What it's for                         | When to read                       |
+| ---------------------- | ------------------------------------- | ---------------------------------- |
+| `HACKATON.md`          | What we're building, in plain English | Right now                          |
+| `TODO.md`              | This file — your checklist            | Right now                          |
+| `CC-MVP1.md`           | Full build plan for Claude Code       | Paste into Claude Code at Step 6.2 |
+| `CC-MVP2.md`           | Future build plan                     | Ignore until MVP1 ships            |
+| `assets/logo.svg`      | Color paw tick logo                   | Claude Code uses this              |
+| `assets/logo-mono.svg` | Monochrome menu bar logo              | Claude Code uses this              |
+| `START_HERE.md`        | Quick run-order summary               | Read if you forget what to do      |
 
 ---
 

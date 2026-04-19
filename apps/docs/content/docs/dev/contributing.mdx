@@ -1,0 +1,51 @@
+---
+title: Contributing
+description: How to ship a change to DenTime.
+---
+
+## Branching
+
+- `main` is protected (solo-main ruleset).
+- All changes go through a pull request, even for the sole maintainer.
+
+## Conventional commits
+
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat(macOS): add working-hours stepper
+fix(docs): resolve basePath in legal pages
+chore: bump turbo to 2.9.3
+```
+
+## CI
+
+Pull requests trigger `.github/workflows/ci.yml`, which runs:
+
+- `bun run typecheck`
+- `bun run test`
+- `bun run lint`
+- `bun run format:check`
+
+All four must pass to merge.
+
+## Docs deploy
+
+Pushing to `main` with changes under `apps/docs/**` triggers `.github/workflows/deploy-docs.yml`, which builds the static export and deploys to GitHub Pages.
+
+## TestFlight
+
+Triggered manually via `.github/workflows/apple-testflight.yml` → Run workflow. Requires the following repo secrets:
+
+- `APPLE_DIST_CERT_P12` — base64 of the distribution `.p12`
+- `APPLE_DIST_CERT_PW` — its password
+- `APPLE_PROVISION_PROFILE` — base64 of the provisioning profile
+- `APPLE_TEAM_ID`
+- `APPLE_ID`
+- `APPLE_APP_SPECIFIC_PW`
+
+## Code style
+
+- **Swift**: 4-space indent, SwiftUI-first, avoid AppKit unless unavoidable.
+- **TypeScript**: tabs, double quotes, strict mode. Prettier + ESLint enforce this.
+- No third-party Swift dependencies without a strong reason.

@@ -81,11 +81,13 @@ Paste this exact message to start:
 > Read the file `CC-MVP1.md` and work through every phase. Use your todo list to track phases. Pause after each phase so I can verify it builds before you continue. Fangdash is at `~/Code/fangdash` — use its patterns. My Cloudflare Workers subdomain is `mrdemonwolf`.
 
 Claude Code will:
+
 - Phase 1-15: scaffold macOS app + Xcode project
 - Phase 16-24: scaffold Fumadocs docs site + GitHub Pages deploy
 - Phase 25-29: repo hygiene + GitHub description/topics + solo-main protection
 
 **Your job during the build:**
+
 - After each phase, verify (open Xcode, hit `⌘B`, confirm it builds; check the docs site in a local `bun dev`)
 - If something's wrong, tell Claude Code to fix it
 - If it tries to build MVP2 features, stop it: "That's out of scope for MVP1, skip."
@@ -129,13 +131,13 @@ Premium tier: meetups, iCal export, calendar integration, unlimited groups
 
 ## 🧭 If you get lost
 
-| Problem | Where to look |
-|---|---|
-| What are we building? | `HACKATON.md` |
-| What's my next step? | `TODO.md` (it's checked and numbered) |
-| Claude Code is going off-script | Tell it: "Stop. That's MVP2. Skip it and continue." |
-| Build fails | Paste the error to Claude Code: "Build fails with: [error]. Fix it." |
-| Overwhelmed | Close the laptop. Walk. Come back in an hour. |
+| Problem                         | Where to look                                                        |
+| ------------------------------- | -------------------------------------------------------------------- |
+| What are we building?           | `HACKATON.md`                                                        |
+| What's my next step?            | `TODO.md` (it's checked and numbered)                                |
+| Claude Code is going off-script | Tell it: "Stop. That's MVP2. Skip it and continue."                  |
+| Build fails                     | Paste the error to Claude Code: "Build fails with: [error]. Fix it." |
+| Overwhelmed                     | Close the laptop. Walk. Come back in an hour.                        |
 
 ---
 
