@@ -1,0 +1,32 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Navy rounded square background -->
+  <rect width="1024" height="1024" rx="224" fill="#091533"/>
+
+  <!-- Paw print in cyan -->
+  <g fill="#0FACED">
+    <!-- Four toe beans in an arc -->
+    <ellipse cx="320" cy="400" rx="80" ry="105" transform="rotate(-12 320 400)"/>
+    <ellipse cx="440" cy="320" rx="80" ry="105" transform="rotate(-4 440 320)"/>
+    <ellipse cx="584" cy="320" rx="80" ry="105" transform="rotate(4 584 320)"/>
+    <ellipse cx="704" cy="400" rx="80" ry="105" transform="rotate(12 704 400)"/>
+
+    <!-- Main pad -->
+    <path d="M 512 480
+             C 340 480, 260 620, 320 760
+             C 360 840, 440 870, 512 870
+             C 584 870, 664 840, 704 760
+             C 764 620, 684 480, 512 480 Z"/>
+  </g>
+
+  <!-- Clock face on main pad — the "tick" -->
+  <circle cx="512" cy="680" r="92" fill="#091533"/>
+  <g stroke="#0FACED" stroke-width="8" stroke-linecap="round" fill="none">
+    <line x1="512" y1="603" x2="512" y2="620"/>
+    <line x1="589" y1="680" x2="572" y2="680"/>
+    <line x1="512" y1="757" x2="512" y2="740"/>
+    <line x1="435" y1="680" x2="452" y2="680"/>
+  </g>
+  <line x1="512" y1="680" x2="512" y2="623" stroke="#0FACED" stroke-width="11" stroke-linecap="round"/>
+  <line x1="512" y1="680" x2="558" y2="680" stroke="#0FACED" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="512" cy="680" r="9" fill="#0FACED"/>
+</svg>

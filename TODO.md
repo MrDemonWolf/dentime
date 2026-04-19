@@ -1,138 +1,295 @@
-# DenTime — Things Only You Can Do
+# 🐾 DenTime — Your TODO List
 
-Claude handled everything that can be scripted. This file is the short list
-of things that require *your* credentials, accounts, or physical presence.
-Tick them off in order.
+> **Do these in order. Don't skip around.** Each step has a time estimate and a "you'll know it worked when…" so you can verify before moving on.
 
 ---
 
-## 1. Local tooling
+## 🧭 How this works
 
-- [ ] `brew install xcodegen` — needed to regenerate `apple/DenTime.xcodeproj`
-- [ ] `bun install` at the repo root (installs every workspace)
-- [ ] `cd apple && xcodegen generate && open DenTime.xcodeproj`
-- [ ] In Xcode, for each target (`DenTime-iOS`, `DenTime-macOS`):
-      Signing & Capabilities → pick your Team → verify Sign in with Apple
-      and Push Notifications are enabled.
+- Steps are numbered. Do them **top to bottom**.
+- ⏱ = time estimate
+- ✅ = how to verify you finished
+- 🚨 = don't skip this
+- 💡 = optional optimization
 
-## 2. Apple Developer account
+When you finish a section, check it off. **Don't start the next one until the current one is ✅.**
 
-- [ ] Enroll / confirm MrDemonWolf, Inc. org account is active.
-- [ ] Register App ID `com.mrdemonwolf.dentime` with capabilities:
-      Sign in with Apple, Push Notifications, App Groups
-      (`group.com.mrdemonwolf.dentime` for widgets in Phase 5).
-- [ ] Create two App Store Connect app records (one iOS, one macOS) with
-      that bundle ID and the name `DenTime`.
-- [ ] Generate an App-specific password at appleid.apple.com
-      (for `altool` uploads from CI).
-- [ ] Export a Developer ID → Apple Distribution certificate as .p12
-      (with password); save both. Base64-encode the .p12 for the GH secret.
-- [ ] Download an App Store provisioning profile for each target.
+---
 
-## 3. Cloudflare account
+## Section 1 — GitHub repo setup
 
-- [ ] Create a Cloudflare account if you don't have one.
-- [ ] Create a D1 database: `bunx wrangler d1 create dentime`.
-  (Alchemy will pick this up — the first `bun run deploy` declares it.)
-- [ ] Create a scoped API token with Workers + D1 write perms.
-      Save the token and your account ID — both go into GitHub secrets.
+### Step 1.1 — Create the empty repo ⏱ 2 min
 
-## 4. RevenueCat (paid features)
+- [ ] Go to https://github.com/new
+- [ ] Owner: `MrDemonWolf`
+- [ ] Repo name: `dentime`
+- [ ] Description: `Menu bar app for finding the best time to meet across timezones. macOS + iOS.`
+- [ ] Visibility: **Public**
+- [ ] Do NOT add README, .gitignore, or license (we'll let Claude Code do that)
+- [ ] Click "Create repository"
 
-- [ ] Create a RevenueCat project `DenTime`.
-- [ ] Add both apps (iOS + macOS) under one project so one entitlement
-      spans both.
-- [ ] Create the `pro` entitlement and two products:
-      `dentime_monthly` ($0.99/mo, 1-week trial),
-      `dentime_annual` ($10.99/yr, 1-week trial).
-- [ ] Set up an App Store Connect shared secret in RC.
-- [ ] Configure a webhook: `https://dentime.mrdemonwolf.workers.dev/webhooks/revenuecat`
-      with HMAC auth — save the shared secret.
-- [ ] Grant yourself a **lifetime promotional entitlement** on `pro` so
-      you never pay yourself. Mirror in the backend with
-      `OWNER_APPLE_SUBS` (see secrets below).
+✅ **Verify:** `github.com/MrDemonWolf/dentime` loads and says "Quick setup".
 
-## 5. Better Stack (logging)
-
-- [ ] Create a source in Better Stack (log type: HTTP).
-- [ ] Save the source token and the ingest URL.
-
-## 6. GitHub repo setup
-
-- [ ] Push this repo to `github.com/mrdemonwolf/dentime` (run
-      `git remote add origin …` + `git push -u origin main`).
-- [ ] Repo **Settings → Pages → Build & deployment → Source: GitHub Actions**.
-      (Do **not** set a custom domain — we're on the project page.)
-- [ ] Repo **Settings → Actions → General** → Allow all workflows.
-
-### GitHub Secrets to add (Settings → Secrets and variables → Actions)
-
-**Cloudflare (api-deploy)**
-- [ ] `CLOUDFLARE_API_TOKEN`
-- [ ] `CLOUDFLARE_ACCOUNT_ID`
-
-**Apple (apple-testflight)**
-- [ ] `APPLE_ID`                       - your Apple Developer account email
-- [ ] `APPLE_APP_SPECIFIC_PW`          - from appleid.apple.com
-- [ ] `APPLE_TEAM_ID`                  - 10-char team id
-- [ ] `APPLE_DIST_CERT_P12`            - base64 of your .p12
-- [ ] `APPLE_DIST_CERT_PW`             - password you set on the .p12
-- [ ] `APPLE_PROVISION_PROFILE`        - base64 of the .mobileprovision
-
-## 7. Cloudflare Worker secrets (via `wrangler secret put` or alchemy)
-
-Run once locally after first deploy:
+### Step 1.2 — Clone it locally ⏱ 1 min
 
 ```bash
-cd packages/infra
-bunx wrangler secret put JWT_SECRET --name dentime       # 32 random bytes, base64
-bunx wrangler secret put APPLE_AUDIENCES --name dentime  # com.mrdemonwolf.dentime
-bunx wrangler secret put BETTER_STACK_TOKEN --name dentime
-bunx wrangler secret put BETTER_STACK_INGEST --name dentime
-bunx wrangler secret put REVENUECAT_WEBHOOK_SECRET --name dentime
-bunx wrangler secret put OWNER_APPLE_SUBS --name dentime # your Apple sub (comma-list)
-bunx wrangler secret put APNS_KEY_P8 --name dentime      # APNs .p8 key (multiline)
-bunx wrangler secret put APNS_KEY_ID --name dentime
-bunx wrangler secret put APNS_TEAM_ID --name dentime
+cd ~/Code   # or wherever you keep projects
+git clone https://github.com/MrDemonWolf/dentime.git
+cd dentime
 ```
 
-> `OWNER_APPLE_SUBS` is populated **after** you sign in to your own app
-> for the first time — grab the Apple `sub` from the Worker logs and
-> paste it here. Until then, set it to the empty string.
+✅ **Verify:** `ls` shows an empty folder (only `.git/`).
 
-## 8. First end-to-end smoke test
+### Step 1.3 — Drop in the planning files ⏱ 2 min
 
-After the above is done:
+From the zip I gave you, copy these files into the repo:
 
-1. Push to `main` → `api-deploy` workflow runs → Worker live at
-   `https://dentime.mrdemonwolf.workers.dev`.
-2. Push any change to `apps/docs/**` → site live at
-   `https://mrdemonwolf.github.io/dentime/`.
-3. `curl https://dentime.mrdemonwolf.workers.dev/health` should return:
-   ```json
-   {"status":"ok","service":"dentime-api","timestamp":"..."}
-   ```
+```
+dentime/
+├── HACKATON.md       ← this file
+├── TODO.md           ← that file
+├── CC-MVP1.md        ← Claude Code prompt for MVP1
+├── CC-MVP2.md        ← Claude Code prompt for MVP2
+└── assets/
+    ├── logo.svg
+    └── logo-mono.svg
+```
 
-## 9. Legal review (required before App Store submission)
+Create the empty folders Claude Code will fill later:
 
-- [ ] Send the TOS and Privacy Policy drafts (in `apps/docs/app/legal/`
-      — currently placeholders) to qualified counsel.
-- [ ] Replace placeholders in
-      `apps/docs/app/legal/terms/page.tsx` and
-      `apps/docs/app/legal/privacy/page.tsx` with counsel-reviewed copy.
+```bash
+mkdir -p apps/macOS apps/iOS apps/docs assets
+touch apps/macOS/.gitkeep apps/iOS/.gitkeep apps/docs/.gitkeep
+```
 
-## 10. App Store pre-submission (before first TestFlight build)
+✅ **Verify:** `tree -L 2` (or `ls apps/`) shows the structure above.
 
-- [ ] Design app icon set (1024 and all mac sizes) → drop into
-      `apple/DenTime/Assets.xcassets/AppIcon.appiconset/`.
-- [ ] Design menu bar template icon (22×22 @1x/2x/3x, monochrome).
-- [ ] Write App Review Notes including the long-press-version reviewer
-      bypass (Phase 6 work, but capture it somewhere).
-- [ ] Run `/anthropic-skills:app-store-review-audit` and
-      `/coderabbit:greenlight` against both targets; fix findings.
-- [ ] Fill out Privacy Nutrition Label in App Store Connect.
+### Step 1.4 — First commit ⏱ 1 min
+
+```bash
+git add .
+git commit -m "chore: hackathon planning docs + brand marks"
+git push
+```
+
+✅ **Verify:** `github.com/MrDemonWolf/dentime` now shows your files.
 
 ---
 
-**If you get stuck on any of these, tell me which step and I'll walk you
-through it or automate what can be automated.**
+## Section 2 — Apple Developer
+
+> 🚨 **Do this before running Claude Code.** Otherwise Xcode will break halfway through.
+
+### Step 2.1 — Create the App ID ⏱ 3 min
+
+- [ ] Go to https://developer.apple.com/account/resources/identifiers/list
+- [ ] Click `+` → **App IDs** → Continue → **App** → Continue
+- [ ] Description: `DenTime`
+- [ ] Bundle ID: **Explicit** → `com.mrdemonwolf.dentime`
+- [ ] Capabilities: leave **everything OFF** (MVP1 doesn't need anything — MVP2 will turn on Sign in with Apple)
+- [ ] Continue → Register
+
+✅ **Verify:** `com.mrdemonwolf.dentime` shows in your App IDs list.
+
+### Step 2.2 — Create App Store Connect record ⏱ 4 min
+
+- [ ] Go to https://appstoreconnect.apple.com/apps
+- [ ] `+` → New App
+- [ ] **Check BOTH platforms: iOS AND macOS** 🚨 (this is how you get one app covering both — skip this and you'll have to register twice)
+- [ ] Name: `DenTime`
+- [ ] Primary Language: English (U.S.)
+- [ ] Bundle ID: pick `com.mrdemonwolf.dentime` from dropdown
+- [ ] SKU: `DENTIME001`
+- [ ] User Access: Full Access
+- [ ] Create
+
+✅ **Verify:** `DenTime` shows in App Store Connect, and clicking it shows tabs for both "iOS App" and "Mac App".
+
+### Step 2.3 — Xcode signing (do after Claude Code runs Phase 1) ⏱ 2 min
+
+After Claude Code creates the Xcode project, open it and:
+
+- [ ] Select the DenTime target → Signing & Capabilities
+- [ ] Check "Automatically manage signing"
+- [ ] Team: **MrDemonWolf, Inc.**
+
+✅ **Verify:** No red errors in the Signing tab. Build succeeds (`⌘B`).
+
+---
+
+## Section 3 — Cloudflare (MVP2 prep, but do now so it's ready)
+
+> 💡 **You can skip this if you're not touching MVP2 yet.** But doing it now means Claude Code can test-deploy the worker when you hit MVP2 Phase 1.
+
+### Step 3.1 — Confirm account subdomain ⏱ 1 min
+
+- [ ] Log into https://dash.cloudflare.com
+- [ ] Workers & Pages → Overview
+- [ ] Your worker URL will be `<worker-name>.<your-subdomain>.workers.dev`
+- [ ] **Write down your subdomain.** It should be `mrdemonwolf` (so DenTime's worker will be at `dentime.mrdemonwolf.workers.dev`).
+
+✅ **Verify:** You know your Cloudflare Workers subdomain.
+
+---
+
+## Section 4 — Clone fangdash for reference ⏱ 1 min
+
+Claude Code will want to read fangdash to copy the Better Auth + Hono monorepo patterns.
+
+```bash
+cd ~/Code
+git clone https://github.com/MrDemonWolf/fangdash.git
+```
+
+✅ **Verify:** `~/Code/fangdash/apps/api/` exists.
+
+---
+
+## Section 5 — Install Claude Code CLI (if you haven't) ⏱ 3 min
+
+```bash
+npm install -g @anthropic-ai/claude-code
+claude --version
+```
+
+✅ **Verify:** Version prints without error.
+
+> If `claude` command not found after install, check your npm global bin path is in `$PATH`.
+
+---
+
+## Section 6 — 🚀 Run Claude Code for MVP1
+
+This is the moment. Deep breath.
+
+### Step 6.1 — Open Claude Code in the repo ⏱ 30 sec
+
+```bash
+cd ~/Code/dentime
+claude
+```
+
+✅ **Verify:** You see the Claude Code prompt.
+
+### Step 6.2 — Give it the plan ⏱ 30 sec
+
+Paste this exact message:
+
+> Read the file `CC-MVP1.md` and work through every phase. Use your todo list to track phases. Pause after each phase so I can verify it builds/runs before you continue. Fangdash is at `~/Code/fangdash` if you need to reference patterns. My Cloudflare subdomain is `mrdemonwolf` (not needed for MVP1, but mentioning for Phase 17+ context).
+
+✅ **Verify:** Claude Code starts reading `CC-MVP1.md` and creates its todo list.
+
+### Step 6.3 — Let it cook ⏱ 2-6 hours
+
+- Claude Code will work through phases and pause between them.
+- After each phase: read what it did, verify it builds (for Xcode phases, open Xcode and hit `⌘B`), say "continue" or correct it.
+- If it goes off-script, interrupt and say "stop — that's MVP2, skip it."
+
+✅ **Verify per phase:** Each `[ ]` in Claude Code's todo list becomes `[x]`.
+
+### Step 6.4 — After final commit, run solo-main protection ⏱ 1 min
+
+Once Claude Code says MVP1 is done and has committed + pushed everything, ask it:
+
+> Use the `gh-solo-main-protection` skill to set up branch protection on this repo.
+
+✅ **Verify:** `github.com/MrDemonWolf/dentime/settings/rules` shows the Solo Main Protection ruleset is active.
+
+---
+
+## Section 7 — Post-MVP1 wrap-up
+
+### Step 7.1 — Verify the docs site deployed ⏱ 2 min
+
+- [ ] Wait ~3 min after push for GitHub Actions to finish
+- [ ] Go to `https://mrdemonwolf.github.io/dentime`
+
+✅ **Verify:** Landing page loads with paw tick logo.
+
+If it doesn't:
+- Check `github.com/MrDemonWolf/dentime/actions` for the deploy workflow status
+- Check `github.com/MrDemonWolf/dentime/settings/pages` — Source should be "GitHub Actions"
+
+### Step 7.2 — Test the Xcode archive ⏱ 10 min
+
+In Xcode:
+
+- [ ] Product → Archive
+- [ ] Wait for build
+- [ ] Window that pops up → Validate App
+- [ ] Pick your team, automatic signing → Next
+- [ ] Let it upload and validate
+
+✅ **Verify:** "App validated successfully" message.
+
+If validation fails, the error will tell you what's missing (usually a Privacy Manifest field or an icon size).
+
+### Step 7.3 — Jira setup (optional, do whenever) ⏱ 5 min
+
+Want me to create this for you via the Atlassian connector? Just say **"create the Jira project for DenTime"** in chat.
+
+Otherwise, manual:
+
+- [ ] Atlassian → Projects → Create → Kanban
+- [ ] Name: `DenTime` · Key: `DEN`
+- [ ] Add epics:
+  - `Hackathon — MVP1 macOS + Docs`
+  - `MVP2 — API + iOS + Meetups`
+  - `MVP3 — Calendar integrations`
+
+### Step 7.4 — Google Drive (optional) ⏱ 3 min
+
+Want me to create via connector? Say **"create the DenTime Drive folder"**.
+
+Otherwise:
+
+- [ ] Drive → New folder → `DenTime`
+- [ ] Subfolders: `01_Design`, `02_App Store`, `03_Legal`, `04_Brand`, `05_Notes`
+- [ ] Drop `logo.svg` + `logo-mono.svg` into `01_Design`
+
+---
+
+## Section 8 — When MVP1 ships, come back for MVP2
+
+Don't start MVP2 until MVP1 is actually **in App Store review or approved.** Shipping something > building more features. Trust me.
+
+When you're ready:
+
+```bash
+cd ~/Code/dentime
+claude
+```
+
+Paste:
+
+> Read `CC-MVP2.md` and work through every phase. Use your todo list. Pause between phases. Fangdash is at `~/Code/fangdash` — use its Better Auth + Hono + monorepo patterns as reference.
+
+---
+
+## 🆘 If you get stuck
+
+- **Xcode won't sign:** Check Step 2.3. Signing happens in Xcode UI, not Claude Code.
+- **GitHub Pages shows 404:** GitHub Actions might still be running. Check `github.com/MrDemonWolf/dentime/actions`.
+- **Claude Code keeps adding MVP2 features:** Interrupt it with "That's out of scope. Skip it and continue."
+- **Something doesn't build:** Ask Claude Code to fix it with "Build fails with: [paste error]. Fix it."
+- **Overwhelmed:** Stop. Close the laptop. Walk the dog (the real one). Come back in an hour.
+
+---
+
+## 📦 Files in this package
+
+After you unzip:
+
+| File | What it's for | When to read |
+|---|---|---|
+| `HACKATON.md` | What we're building, in plain English | Right now |
+| `TODO.md` | This file — your checklist | Right now |
+| `CC-MVP1.md` | Full build plan for Claude Code | Paste into Claude Code at Step 6.2 |
+| `CC-MVP2.md` | Future build plan | Ignore until MVP1 ships |
+| `assets/logo.svg` | Color paw tick logo | Claude Code uses this |
+| `assets/logo-mono.svg` | Monochrome menu bar logo | Claude Code uses this |
+| `START_HERE.md` | Quick run-order summary | Read if you forget what to do |
+
+---
+
+**Current state:** You're reading this. Go to Section 1, Step 1.1. Start. 🐺
