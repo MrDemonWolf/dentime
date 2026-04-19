@@ -1,0 +1,63 @@
+---
+title: Building from source
+description: Get the repo running locally.
+---
+
+## Prerequisites
+
+- [bun](https://bun.sh/) ≥ 1.3
+- Node ≥ 20 (for tooling that requires it)
+- Xcode 15+ on macOS 13+
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen) — `brew install xcodegen`
+
+## Clone & install
+
+```bash
+git clone https://github.com/MrDemonWolf/dentime.git
+cd dentime
+bun install
+```
+
+## Run the docs site
+
+```bash
+bun run --filter @dentime/docs dev
+# → http://localhost:3001
+```
+
+## Build & open the macOS app
+
+```bash
+cd apps/macOS
+xcodegen generate
+open DenTime.xcodeproj
+# ⌘R in Xcode
+```
+
+Or from the command line:
+
+```bash
+xcodebuild -project DenTime.xcodeproj -scheme DenTime \
+  -configuration Debug -destination 'platform=macOS' build
+```
+
+## Run tests
+
+```bash
+# TS (currently a placeholder — packages/shared has no tests yet)
+bun run test
+
+# Swift
+cd apps/macOS
+xcodebuild -project DenTime.xcodeproj -scheme DenTime \
+  -destination 'platform=macOS' test
+```
+
+## Lint / typecheck / format
+
+```bash
+bun run typecheck
+bun run lint
+bun run format:check
+bun run format    # writes fixes
+```

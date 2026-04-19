@@ -42,11 +42,13 @@ API lives at `https://dentime.mrdemonwolf.workers.dev`.
 ## Free tier vs Premium
 
 **Free:**
+
 - Roster view (any number of friends)
 - Find a Time (picking a time, seeing conversions)
 - Sign in with Apple, friend code, sync across devices
 
 **Premium ($1.99/mo or $16.99/yr):**
+
 - Meetups (Doodle-style polls)
 - iCal export
 - Calendar integration (conflict detection + auto-add events)
@@ -144,20 +146,23 @@ Read fangdash's `apps/api/src/lib/auth.ts` in detail. Replicate with Apple provi
 File: `apps/api/src/lib/friend-code.ts`
 
 ```typescript
-const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';  // Crockford base32, no I/L/O/U
+const ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"; // Crockford base32, no I/L/O/U
 
 export function generate(): string {
-  const bytes = new Uint8Array(8);
-  crypto.getRandomValues(bytes);
-  return [...bytes].map(b => ALPHABET[b % 32]).join('');
+	const bytes = new Uint8Array(8);
+	crypto.getRandomValues(bytes);
+	return [...bytes].map((b) => ALPHABET[b % 32]).join("");
 }
 
 export function format(code: string): string {
-  return `${code.slice(0, 4)}-${code.slice(4)}`;
+	return `${code.slice(0, 4)}-${code.slice(4)}`;
 }
 
 export function normalize(input: string): string {
-  return input.toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 8);
+	return input
+		.toUpperCase()
+		.replace(/[^0-9A-Z]/g, "")
+		.slice(0, 8);
 }
 ```
 
@@ -202,6 +207,7 @@ File: `apps/api/src/lib/ics.ts` — hand-roll RFC 5545 output.
 - [ ] DTSTAMP, DTSTART (UTC `Z`), DTEND computed from duration
 
 Routes:
+
 - [ ] `GET /meetups/:id/slots/:slotId.ics` → authenticated
 - [ ] `GET /ics/time?start=<iso>&minutes=<int>&title=<str>&tz=<id>` → standalone export
 - [ ] Both set `Content-Type: text/calendar; charset=utf-8`, `Content-Disposition: attachment; filename="dentime-<id>.ics"`
@@ -214,10 +220,12 @@ Routes:
 - [ ] `GET /subscriptions/status` → return current status (for client to refresh on launch)
 
 `src/routes/webhooks.ts`:
+
 - [ ] `POST /webhooks/apple` → App Store Server Notifications V2. Verify JWS signature against Apple's public keys. Handle events: `DID_RENEW`, `DID_FAIL_TO_RENEW`, `EXPIRED`, `REFUND`, `SUBSCRIBED`, `DID_CHANGE_RENEWAL_STATUS`, `GRACE_PERIOD_EXPIRED`
 - [ ] Log all webhooks (we care about billing history for support)
 
 **Nathanial's TODO (Phase 9 prerequisite):**
+
 - Create App Store Connect subscription group `DenTime Premium`
 - Product `com.mrdemonwolf.dentime.monthly` — $1.99 USD, with 14-day intro free trial
 - Product `com.mrdemonwolf.dentime.yearly` — $16.99 USD, with 14-day intro free trial
@@ -226,6 +234,7 @@ Routes:
 - Set App Store Server Notifications URL in App Store Connect → Your App → App Information → `https://dentime.mrdemonwolf.workers.dev/webhooks/apple`
 
 Middleware `src/middleware/subscription.ts`:
+
 - [ ] `requireSubscription` — rejects with 402 if `user.subscriptionStatus` is not `trial` or `active`
 - [ ] Attach subscription info to `c.set('subscription', ...)` so downstream handlers can differentiate trial vs active
 
@@ -269,6 +278,7 @@ let package = Package(
 ### Phase 12 — macOS: Add Friend by code
 
 Update AddFriendView:
+
 - [ ] Two modes: "Add by code" (new, requires sign-in) vs "Add local note" (MVP1 flow, always available — use this language on UI so people know the distinction)
 - [ ] Paste code → `GET /roster/preview/:code` → show name + timezone → confirm → `POST /roster`
 - [ ] QR code scanner: stretch goal, not required
@@ -308,8 +318,8 @@ Add "Meetups" tab to RootView (now: Now / Find a Time / Meetups / ⚙).
 - [ ] StoreKit 2 via `import StoreKit`
 - [ ] `PaywallViewModel` `@Observable` — fetches products, handles purchase, calls server verify
 - [ ] `PaywallView`: navy hero with paw tick, "DenTime Premium", feature list (Meetups, iCal export, Calendar integration, Unlimited groups), two product buttons:
-  - **Yearly $16.99** (highlighted as "Best value — save 29%")
-  - Monthly $1.99
+    - **Yearly $16.99** (highlighted as "Best value — save 29%")
+    - Monthly $1.99
 - [ ] Big CTA: "Start 14-day free trial" (only shown if user is eligible via StoreKit's `Product.SubscriptionInfo.isEligibleForIntroOffer`)
 - [ ] "Restore purchases" link
 - [ ] "Manage subscription" link in Settings → opens `https://apps.apple.com/account/subscriptions`
@@ -324,6 +334,7 @@ Add "Meetups" tab to RootView (now: Now / Find a Time / Meetups / ⚙).
 My push-back: **Both.** MAS for discovery + auto-managed updates; Developer ID + Sparkle for faster iteration on power users. You'd maintain two archives per release — not much extra work since the archive process is the same, just two signing configs.
 
 If Developer ID + Sparkle:
+
 - [ ] Add Sparkle via SPM: `https://github.com/sparkle-project/Sparkle`
 - [ ] `appcast.xml` served at `https://mrdemonwolf.github.io/dentime/appcast.xml` (static, updated per release via GitHub Actions)
 - [ ] Generate EdDSA signing keys (`generate_keys` tool from Sparkle) — **store private key OFFLINE in 1Password, never commit**
@@ -352,17 +363,19 @@ If Developer ID + Sparkle:
 ### Phase 21 — iOS: Universal Links
 
 - [ ] Create `apps/docs/public/.well-known/apple-app-site-association` (JSON, no `.json` extension):
-  ```json
-  {
-    "applinks": {
-      "apps": [],
-      "details": [{
-        "appIDs": ["TEAMID.com.mrdemonwolf.dentime"],
-        "paths": ["/add/*", "/meetup/*"]
-      }]
+    ```json
+    {
+    	"applinks": {
+    		"apps": [],
+    		"details": [
+    			{
+    				"appIDs": ["TEAMID.com.mrdemonwolf.dentime"],
+    				"paths": ["/add/*", "/meetup/*"]
+    			}
+    		]
+    	}
     }
-  }
-  ```
+    ```
 - [ ] Nathanial's TODO: replace `TEAMID` with actual Apple Team ID (from developer portal)
 - [ ] Enable Associated Domains capability in iOS target: `applinks:mrdemonwolf.github.io`
 - [ ] Handle incoming URLs via SwiftUI `.onOpenURL`
@@ -373,13 +386,13 @@ If Developer ID + Sparkle:
 
 - [ ] New docs pages: "Signing in with Apple", "Sharing your friend code", "Creating a meetup", "Calendar integration", "Subscription & billing", "Canceling your subscription"
 - [ ] Update Privacy Policy — declare what the API collects:
-  - Apple anonymous sub + Better Auth session tokens (30-day expiry in KV)
-  - Display name (user-provided)
-  - Timezone identifier
-  - Roster (list of other users' IDs)
-  - Meetup data (titles, descriptions, slots, responses)
-  - Subscription status + renewal dates
-  - Request logs (if Better Stack or similar added later)
+    - Apple anonymous sub + Better Auth session tokens (30-day expiry in KV)
+    - Display name (user-provided)
+    - Timezone identifier
+    - Roster (list of other users' IDs)
+    - Meetup data (titles, descriptions, slots, responses)
+    - Subscription status + renewal dates
+    - Request logs (if Better Stack or similar added later)
 - [ ] Retention: account deletion wipes everything within 30 days
 - [ ] Update Terms with subscription terms, auto-renewal language per App Store
 - [ ] Add "Download on the App Store" badges once apps ship
@@ -389,20 +402,21 @@ If Developer ID + Sparkle:
 - [ ] `wrangler deploy` → publishes to `dentime.mrdemonwolf.workers.dev`
 - [ ] Apply D1 migrations to production: `bun run db:migrate:remote`
 - [ ] Set production secrets (use `wrangler secret put`):
-  - `BETTER_AUTH_SECRET`
-  - `APPLE_CLIENT_ID` (the Services ID)
-  - `APPLE_TEAM_ID`
-  - `APPLE_KEY_ID`
-  - `APPLE_PRIVATE_KEY` (the .p8 file contents)
-  - `STOREKIT_KEY_ID`
-  - `STOREKIT_ISSUER_ID`
-  - `STOREKIT_PRIVATE_KEY` (the App Store Server API .p8)
-  - `STOREKIT_BUNDLE_ID = com.mrdemonwolf.dentime`
+    - `BETTER_AUTH_SECRET`
+    - `APPLE_CLIENT_ID` (the Services ID)
+    - `APPLE_TEAM_ID`
+    - `APPLE_KEY_ID`
+    - `APPLE_PRIVATE_KEY` (the .p8 file contents)
+    - `STOREKIT_KEY_ID`
+    - `STOREKIT_ISSUER_ID`
+    - `STOREKIT_PRIVATE_KEY` (the App Store Server API .p8)
+    - `STOREKIT_BUNDLE_ID = com.mrdemonwolf.dentime`
 - [ ] Verify `curl https://dentime.mrdemonwolf.workers.dev/health` returns 200
 
 ### Phase 24 — CI + deploy workflow
 
 `.github/workflows/deploy-api.yml`:
+
 - [ ] On push to main with paths `apps/api/**` or `packages/shared/**`: run tests, typecheck, then `wrangler deploy`
 - [ ] Uses secret `CLOUDFLARE_API_TOKEN` (Nathanial adds to GitHub repo Secrets)
 
@@ -411,10 +425,10 @@ If Developer ID + Sparkle:
 Update `apps/macOS/DenTime/DenTime/Resources/PrivacyInfo.xcprivacy` and create iOS equivalent:
 
 - [ ] `NSPrivacyCollectedDataTypes`:
-  - `NSPrivacyCollectedDataTypeUserID` — linked to user, for App Functionality (our UUID)
-  - `NSPrivacyCollectedDataTypeName` — linked, App Functionality (user-provided display name)
-  - `NSPrivacyCollectedDataTypeOtherUserContent` — linked, App Functionality (meetups, responses)
-  - `NSPrivacyCollectedDataTypePurchaseHistory` — linked, App Functionality (subscription status)
+    - `NSPrivacyCollectedDataTypeUserID` — linked to user, for App Functionality (our UUID)
+    - `NSPrivacyCollectedDataTypeName` — linked, App Functionality (user-provided display name)
+    - `NSPrivacyCollectedDataTypeOtherUserContent` — linked, App Functionality (meetups, responses)
+    - `NSPrivacyCollectedDataTypePurchaseHistory` — linked, App Functionality (subscription status)
 - [ ] `NSPrivacyTracking = false` (still not tracking across apps)
 - [ ] `NSPrivacyAccessedAPITypes`: UserDefaults (CA92.1), File Timestamp (C617.1 if OfflineCache uses file dates)
 
@@ -423,15 +437,16 @@ Update `apps/macOS/DenTime/DenTime/Resources/PrivacyInfo.xcprivacy` and create i
 - [ ] macOS archive → validate → upload to App Store Connect
 - [ ] iOS archive → validate → upload to App Store Connect
 - [ ] App Review metadata:
-  - Demo account Apple ID (create a dedicated test account; store creds in Nathanial's 1Password)
-  - Review notes: "Use Sign in with Apple with the provided demo account. Friend code will be visible in Settings > Account. To test meetups, create a meetup with any slot and invite demo friend code [XXXX-XXXX] (pre-seeded)."
-  - Privacy Nutrition Label updated per Phase 25
-  - In-app purchases must be marked "Ready to Submit" before app binary submission
+    - Demo account Apple ID (create a dedicated test account; store creds in Nathanial's 1Password)
+    - Review notes: "Use Sign in with Apple with the provided demo account. Friend code will be visible in Settings > Account. To test meetups, create a meetup with any slot and invite demo friend code [XXXX-XXXX] (pre-seeded)."
+    - Privacy Nutrition Label updated per Phase 25
+    - In-app purchases must be marked "Ready to Submit" before app binary submission
 - [ ] Submit both targets together (App Store prefers this for multi-platform apps)
 
 ### Phase 27 — Summary
 
 Print:
+
 1. File counts added, Swift + TypeScript LOC added
 2. Phases skipped/modified with reasons
 3. Nathanial's manual TODOs remaining (Services ID creation, subscription products, App Store Server API key, Team ID in AASA file, TestFlight round)
@@ -456,6 +471,7 @@ Print:
 ## Pricing references (for the App Store Connect side)
 
 Tier mapping (App Store uses tiered pricing):
+
 - $1.99 → US tier 2
 - $16.99 → US tier ~16 (check App Store Connect's current tier chart)
 

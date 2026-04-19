@@ -1,0 +1,40 @@
+---
+title: FAQ
+description: Common questions about DenTime.
+---
+
+## Does DenTime collect any data?
+
+**No.** In MVP1, everything stays on your Mac. No account, no servers, no analytics, no crash reporting. The app is Apple-sandboxed and its Privacy Manifest declares zero data collection.
+
+## Does it sync between my devices?
+
+**Not yet.** MVP1 is local-only. Sync (via Apple Sign In + a private Cloudflare Worker API) lands in MVP2. When it does, it’ll be opt-in and we’ll update the Privacy Policy.
+
+## Is there an iPhone app?
+
+**Not yet.** iPhone is MVP2. It’ll share most of the logic with the Mac app.
+
+## Does it export to my calendar?
+
+**Not yet.** iCal / `.ics` export and Apple Calendar integration are MVP2.
+
+## Is it open source?
+
+The docs site lives at [github.com/MrDemonWolf/dentime](https://github.com/MrDemonWolf/dentime). The Swift source is in the same repo under `apps/macOS/`.
+
+## Why a menu bar app and not a regular app?
+
+A timezone tool should be **always available, never in the way**. Menu bar wins. No dock clutter, no Command-Tab noise, one click from the top of your screen.
+
+## How much does it cost?
+
+**Free.** No paywall, no pro tier planned for MVP1 or MVP2.
+
+## Who made this?
+
+[Nathanial Henniges](https://mrdemonwolf.com) / MrDemonWolf, Inc. Built in Beloit, WI.
+
+## I have a bug / a feature request
+
+Open an issue at [github.com/MrDemonWolf/dentime/issues](https://github.com/MrDemonWolf/dentime/issues).

@@ -1,0 +1,56 @@
+---
+title: Architecture
+description: How the DenTime monorepo is laid out.
+---
+
+## Repo layout
+
+```
+dentime/
+├── apps/
+│   ├── macOS/        SwiftUI menu bar app (XcodeGen project.yml)
+│   ├── iOS/          MVP2 stub
+│   └── docs/         Next.js 15 + Fumadocs, static export
+├── packages/
+│   └── shared/       Placeholder for MVP2 cross-platform types
+├── assets/           Brand SVGs
+└── .github/workflows/
+    ├── ci.yml
+    ├── deploy-docs.yml
+    └── apple-testflight.yml
+```
+
+- **Turborepo** orchestrates builds across workspaces
+- **bun** is the package manager and runtime for tooling
+- Root configs (`tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc.json`) are shared by all TS workspaces
+
+## macOS app modules
+
+```
+apps/macOS/DenTime/
+├── App/                @main + AppState
+├── Models/             Friend, TimeFormat, TimeStatus
+├── Storage/            FriendStore (UserDefaults), SettingsStore
+├── Views/
+│   ├── RootView        Segmented picker shell, default tab = Roster
+│   ├── Roster/         Grouped list, live updates, right-click actions
+│   ├── MeetingFinder/  Date picker + converted times + copy summary
+│   ├── AddFriend/      Add/Edit sheet (same view, two modes)
+│   └── Settings/       Display / working hours / refresh / launch / about
+└── Resources/
+    ├── Assets.xcassets Icons + brand colors
+    └── PrivacyInfo.xcprivacy  Apple Privacy Manifest
+```
+
+- No third-party Swift dependencies. Just Foundation + SwiftUI + ServiceManagement.
+- State is SwiftUI `@StateObject` / `@EnvironmentObject` — no Combine pipelines.
+- Persistence: JSON-encoded array in UserDefaults under key `dentime.friends.v1`.
+
+## Docs site
+
+- **Fumadocs** for the `/docs` routes, plus a hand-rolled `(home)` route group for the landing page and `/legal` routes for ToS/Privacy.
+- `next.config.mjs` uses `output: "export"` + `basePath: "/dentime"` in production → GitHub Pages.
+
+## No backend in MVP1
+
+By design. Scope creep protection — see `CC-MVP2.md` for the sync + iOS work that’ll introduce a Cloudflare Workers + Hono + D1 + Drizzle stack later.

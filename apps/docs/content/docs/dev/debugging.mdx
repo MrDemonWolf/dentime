@@ -1,0 +1,60 @@
+---
+title: Debugging
+description: Where to look when something's off.
+---
+
+## Console.app
+
+DenTime’s Swift logs go to the unified log. Open **Console.app** and filter:
+
+- Process: `DenTime`
+- Or subsystem: `com.mrdemonwolf.dentime`
+
+Useful for `SMAppService` (launch-at-login) errors and crash markers.
+
+## Inspect stored data
+
+DenTime persists friends in UserDefaults under the key `dentime.friends.v1`:
+
+```bash
+defaults read com.mrdemonwolf.dentime
+```
+
+To wipe all DenTime preferences:
+
+```bash
+defaults delete com.mrdemonwolf.dentime
+```
+
+## Settings keys
+
+| Key                               | Type                                     | Default      |
+| --------------------------------- | ---------------------------------------- | ------------ |
+| `dentime.friends.v1`              | JSON-encoded `[Friend]`                  | `[]`         |
+| `dentime.settings.timeFormat`     | String (`twelveHour` / `twentyFourHour`) | `twelveHour` |
+| `dentime.settings.workStart`      | Int (0-23)                               | `9`          |
+| `dentime.settings.workEnd`        | Int (1-24)                               | `18`         |
+| `dentime.settings.refreshSeconds` | Int                                      | `30`         |
+| `dentime.settings.showDelta`      | Bool                                     | `true`       |
+| `dentime.settings.launchAtLogin`  | Bool                                     | `false`      |
+
+## Sandbox gotchas
+
+DenTime runs with `com.apple.security.app-sandbox`. In MVP1 that’s the only entitlement. Anything that needs network, file access outside the sandbox, or other capabilities would require updating `DenTime.entitlements` **and** the Privacy Manifest (`PrivacyInfo.xcprivacy`).
+
+## Common build failures
+
+- **`xcodegen` says “Couldn’t find current username”** — set `USER=$(whoami)` before running (some shells clear it).
+- **`@main` attribute cannot be used in a module that contains top-level code** — SourceKit noise outside a project. Ignore in the editor; real build succeeds.
+- **`onChange(of:initial:_:)` only available in macOS 14** — use the older single-arg closure form; macOS 13 is our minimum.
+
+## Hardened runtime + notarization
+
+Archive builds need:
+
+- App Sandbox enabled
+- Hardened Runtime enabled (set in `project.yml`)
+- Privacy Manifest (`PrivacyInfo.xcprivacy`)
+- A Development Team configured (Xcode → Signing & Capabilities)
+
+Organizer → Validate App should be clean before uploading to App Store Connect.

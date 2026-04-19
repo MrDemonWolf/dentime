@@ -1,0 +1,47 @@
+---
+title: Troubleshooting
+description: Quick fixes for common issues, written for non-techies.
+---
+
+## The menu bar icon is missing
+
+macOS hides menu bar items when there’s no room. Try:
+
+1. Hold **⌘** and drag items in your menu bar to reorder.
+2. If you have a Mac with a notch, third-party icons can get hidden behind it — [Bartender](https://www.macbartender.com/) or [Ice](https://icemenubar.app/) help.
+3. If the icon is _really_ gone (not just hidden): quit and reopen DenTime from Applications.
+
+## The app won’t open
+
+1. Right-click **DenTime** in Applications → Open (instead of double-click). macOS sometimes flags new apps on first launch.
+2. If that doesn’t work: System Settings → Privacy & Security → scroll to the bottom → click **Open Anyway** next to DenTime.
+
+## A friend’s time looks wrong
+
+Usually this means the timezone you picked for them isn’t the one they actually use. Right-click their name → Edit → pick the correct city. For example:
+
+- **Arizona** doesn’t observe DST — use `America/Phoenix`, not `America/Denver`.
+- **Indiana** has two zones — `America/Indiana/Indianapolis` for most of the state.
+- **China** is one zone — `Asia/Shanghai`.
+
+## Times haven’t updated in a while
+
+Check Settings → Refresh. Default is 30 seconds. If your Mac was asleep, times refresh the next time you open the menu bar.
+
+## Launch at login isn’t working
+
+1. Settings → Startup → toggle off, then on again.
+2. System Settings → General → Login Items → make sure DenTime is listed and enabled.
+
+## I want to start fresh
+
+DenTime stores your friend list in macOS’s UserDefaults. To wipe it completely:
+
+1. Quit DenTime (**⌘Q**).
+2. Open Terminal.
+3. Run: `defaults delete com.mrdemonwolf.dentime`
+4. Open DenTime again — you’re back to square one.
+
+## Still stuck?
+
+Open an issue at [github.com/MrDemonWolf/dentime/issues](https://github.com/MrDemonWolf/dentime/issues) — include your macOS version (Apple menu → About This Mac) and what you were doing when the problem started.

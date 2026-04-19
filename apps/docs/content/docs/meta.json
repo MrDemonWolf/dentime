@@ -1,0 +1,15 @@
+{
+	"title": "Docs",
+	"pages": [
+		"index",
+		"getting-started",
+		"adding-friends",
+		"finding-a-meeting-time",
+		"settings",
+		"faq",
+		"troubleshooting",
+		"roadmap",
+		"---Developers---",
+		"dev"
+	]
+}

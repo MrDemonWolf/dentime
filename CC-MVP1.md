@@ -41,6 +41,7 @@ The GitHub repo `github.com/MrDemonWolf/dentime` should be fully configured with
 ## Tech
 
 ### macOS app
+
 - Swift 5.9+, SwiftUI (no AppKit unless unavoidable)
 - macOS 13.0 minimum (required for `MenuBarExtra`)
 - Zero third-party dependencies
@@ -48,6 +49,7 @@ The GitHub repo `github.com/MrDemonWolf/dentime` should be fully configured with
 - Team: MrDemonWolf, Inc.
 
 ### Docs site
+
 - Next.js 15+ (App Router)
 - Fumadocs MDX (match fangdash's Fumadocs patterns)
 - TypeScript strict mode
@@ -57,6 +59,7 @@ The GitHub repo `github.com/MrDemonWolf/dentime` should be fully configured with
 - URL: `https://mrdemonwolf.github.io/dentime`
 
 ### Repo tooling (match fangdash)
+
 - bun (not pnpm, not npm)
 - Turborepo
 - bun workspaces
@@ -163,11 +166,11 @@ Read fangdash's root files first: `~/Code/fangdash/package.json`, `turbo.json`, 
 ### Phase 2 — Xcode project scaffold
 
 - [ ] Create Xcode project at `apps/macOS/DenTime/` using `xcodegen` if available, otherwise prompt Nathanial to create via Xcode UI with these exact settings:
-  - Template: macOS App, SwiftUI, Swift
-  - Product Name: `DenTime`
-  - Team: MrDemonWolf, Inc.
-  - Bundle Identifier: `com.mrdemonwolf.dentime`
-  - Minimum Deployment: macOS 13.0
+    - Template: macOS App, SwiftUI, Swift
+    - Product Name: `DenTime`
+    - Team: MrDemonWolf, Inc.
+    - Bundle Identifier: `com.mrdemonwolf.dentime`
+    - Minimum Deployment: macOS 13.0
 - [ ] Info.plist: `LSUIElement = YES`, `CFBundleDisplayName = DenTime`
 - [ ] Signing & Capabilities: enable App Sandbox (default entitlements only), Hardened Runtime
 - [ ] Verify `xcodebuild -project apps/macOS/DenTime/DenTime.xcodeproj -scheme DenTime build` succeeds
@@ -191,17 +194,19 @@ struct Friend: Identifiable, Codable, Hashable {
   var groupName: String?       // nil = Ungrouped
   var colorHex: String?
   var sortOrder: Int
-  
+
   var timezone: TimeZone { TimeZone(identifier: timezoneIdentifier) ?? .current }
 }
 ```
 
 File: `apps/macOS/DenTime/DenTime/Models/TimeFormat.swift`
+
 ```swift
 enum TimeFormat: String, Codable, CaseIterable { case twelveHour, twentyFourHour }
 ```
 
 File: `apps/macOS/DenTime/DenTime/Models/TimeStatus.swift`
+
 ```swift
 enum TimeStatus { case working, edge, sleep }
 // computed from hour-of-day + settings working hours
@@ -218,17 +223,17 @@ File: `apps/macOS/DenTime/DenTime/Storage/FriendStore.swift`
 @MainActor
 final class FriendStore: ObservableObject {
   @Published private(set) var friends: [Friend] = []
-  
+
   private let defaults: UserDefaults
   private let key = "dentime.friends.v1"
-  
+
   init(defaults: UserDefaults = .standard) { … }
-  
+
   func add(_ friend: Friend) { … }
   func update(_ friend: Friend) { … }
   func delete(id: UUID) { … }
   func move(from: IndexSet, to: Int) { … }
-  
+
   // Groups
   var groupedFriends: [(group: String, friends: [Friend])] {
     // Group by groupName, "Friends" for nil, sort groups alphabetically with "Friends" last
@@ -240,6 +245,7 @@ final class FriendStore: ObservableObject {
 ```
 
 File: `apps/macOS/DenTime/DenTime/Storage/SettingsStore.swift` (use `@AppStorage` under the hood or an `ObservableObject` wrapping `UserDefaults`):
+
 - `timeFormat: TimeFormat` (default 12h)
 - `workingHoursStart: Int` (default 9)
 - `workingHoursEnd: Int` (default 18)
@@ -257,7 +263,7 @@ File: `apps/macOS/DenTime/DenTime/App/DenTimeApp.swift`
 struct DenTimeApp: App {
   @StateObject private var friendStore = FriendStore()
   @StateObject private var settings = SettingsStore()
-  
+
   var body: some Scene {
     MenuBarExtra("DenTime", image: "MenuBarIcon") {
       RootView()
@@ -277,6 +283,7 @@ struct DenTimeApp: App {
 File: `apps/macOS/DenTime/DenTime/Views/Roster/RosterView.swift`
 
 Layout:
+
 - Top: "+ Add friend" button, refresh indicator
 - Scrollable list: for each group in `friendStore.groupedFriends`, a section header with group name + count, then rows
 - Friend row: avatar dot (colorHex), name (bold), timezone abbreviation + current time + delta from user's zone (+Nh / -Nh) colored by TimeStatus
@@ -284,10 +291,12 @@ Layout:
 - "You" row at bottom: current user's local time, static, visually distinct
 
 Refresh:
+
 - Timer publisher tied to `settings.refreshIntervalSeconds`
 - Every tick: force `ObservableObject` refresh to recompute time strings
 
 Interactions:
+
 - Click row → copy to NSPasteboard: `"It's \(time) \(dayOfWeek) for \(name) in \(city)"` (city derived from timezone identifier's last segment, underscores → spaces). Show "Copied!" toast for 1.5s.
 - Right-click → Context menu: Edit, Copy current time, Move to group → (submenu: existing groups + "New group…" + "Ungrouped"), Delete
 - Drag-to-reorder within a group via `.onMove`
@@ -297,20 +306,24 @@ Interactions:
 File: `apps/macOS/DenTime/DenTime/Views/AddFriend/AddFriendView.swift`
 
 Fields:
+
 - Name (TextField)
 - Timezone (searchable picker populated from `TimeZone.knownTimeZoneIdentifiers.sorted()`, show current time preview as user selects)
 - Group (picker: existing groups + "Ungrouped" + "New group…" → text field appears)
 - Color (optional, 8 preset swatches)
 
 Validation:
+
 - Name not empty
 - Timezone identifier valid
 
 Modes:
+
 - `.add` — new UUID, append
 - `.edit(Friend)` — update in place
 
 Triggers:
+
 - `+` button in roster header
 - `⌘N` keyboard shortcut
 - Right-click → Edit on a row
@@ -320,13 +333,14 @@ Triggers:
 File: `apps/macOS/DenTime/DenTime/Views/MeetingFinder/MeetingFinderView.swift`
 
 Layout:
+
 - Top: `DatePicker` for date + time in user's local zone (default: next round half-hour ≥ now)
 - Below: list of friends grouped the same way as roster, each showing:
-  - Name
-  - Converted time in their zone
-  - `+Nd` / `-Nd` day-boundary badge if applicable
-  - Background tint by TimeStatus (green / yellow / red)
-  - Checkbox on left to include/exclude from copy-summary
+    - Name
+    - Converted time in their zone
+    - `+Nd` / `-Nd` day-boundary badge if applicable
+    - Background tint by TimeStatus (green / yellow / red)
+    - Checkbox on left to include/exclude from copy-summary
 - Bottom: "Copy as text" button → NSPasteboard with:
   `"\(dayOfWeek) \(monthShort) \(dayNum) at \(timeLocal) \(cityLocal) is \(timeA) \(cityA), \(timeB) \(cityB), …"`
 
@@ -337,6 +351,7 @@ Only checked friends appear in the summary string.
 File: `apps/macOS/DenTime/DenTime/Views/Settings/SettingsView.swift`
 
 Sections:
+
 - **Display** — time format (12h/24h Picker), show delta column (Toggle)
 - **Working hours** — start/end Steppers, 0-23
 - **Refresh** — Picker 15s/30s/60s
@@ -382,6 +397,7 @@ File: `apps/macOS/DenTime/DenTime/Resources/PrivacyInfo.xcprivacy`
 ```
 
 Verify:
+
 - [ ] Sandbox entitlements file has only `com.apple.security.app-sandbox = true`
 - [ ] No other entitlements (no network, no file access, no contacts, no calendars — all MVP2)
 - [ ] Hardened Runtime enabled
@@ -399,18 +415,20 @@ Verify:
 
 - [ ] `apps/iOS/.gitkeep` in place
 - [ ] `apps/iOS/README.md`:
-  ```
-  # DenTime iOS
-  
-  Scaffolded in MVP2. See `../../CC-MVP2.md` Phase 17.
-  Will import `packages/DenTimeCore` once extracted.
-  ```
+
+    ```
+    # DenTime iOS
+
+    Scaffolded in MVP2. See `../../CC-MVP2.md` Phase 17.
+    Will import `packages/DenTimeCore` once extracted.
+    ```
 
 ### Phase 15 — macOS README
 
 File: `apps/macOS/README.md`
 
 Sections:
+
 - Requirements: Xcode 15+, macOS 13+, bundle ID `com.mrdemonwolf.dentime`
 - Build: `xcodebuild -project DenTime/DenTime.xcodeproj -scheme DenTime build`
 - Run: open in Xcode, `⌘R`
@@ -428,29 +446,29 @@ Read `~/Code/fangdash/apps/docs/` fully before starting. Fumadocs setup, next.co
 - [ ] `cd apps && bun create next-app docs --ts --tailwind --app --eslint --src-dir --import-alias "@/*" --no-turbopack`
 - [ ] `cd docs && bun add fumadocs-ui fumadocs-core fumadocs-mdx`
 - [ ] Replicate from `~/Code/fangdash/apps/docs/`:
-  - `source.config.ts`
-  - `src/lib/source.ts`
-  - `src/mdx-components.tsx`
-  - `next.config.mjs` (with Fumadocs MDX plugin — adapt the static export config below)
-  - `tailwind.config.ts` with Fumadocs preset + brand colors
-  - `tsconfig.json` extending `../../tsconfig.base.json`
+    - `source.config.ts`
+    - `src/lib/source.ts`
+    - `src/mdx-components.tsx`
+    - `next.config.mjs` (with Fumadocs MDX plugin — adapt the static export config below)
+    - `tailwind.config.ts` with Fumadocs preset + brand colors
+    - `tsconfig.json` extending `../../tsconfig.base.json`
 
 ### Phase 17 — Static export config for GitHub Pages
 
 `apps/docs/next.config.mjs`:
 
 ```js
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from "fumadocs-mdx/next";
 
 const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  output: 'export',
-  basePath: process.env.NODE_ENV === 'production' ? '/dentime' : '',
-  images: { unoptimized: true },
-  trailingSlash: true,
-  reactStrictMode: true,
+	output: "export",
+	basePath: process.env.NODE_ENV === "production" ? "/dentime" : "",
+	images: { unoptimized: true },
+	trailingSlash: true,
+	reactStrictMode: true,
 };
 
 export default withMDX(config);
@@ -465,12 +483,13 @@ export default withMDX(config);
 `apps/docs/src/app/(home)/page.tsx`:
 
 Sections top-to-bottom:
+
 1. **Nav** — logo + "Docs" + "Terms" + "Privacy" + external GitHub link
 2. **Hero** — navy bg, paw tick logo (large), headline "Timezones for your pack", subhead "Find the best time to meet across zones. Menu bar for Mac, Home screen for iPhone.", CTA button "Download for Mac" (disabled-ish with "Coming to App Store" label for now)
 3. **Features (3 cards)**:
-   - "Menu bar at a glance" — roster with current times, grouped by Work / Pack / Family
-   - "Meeting finder that actually works" — pick a time, see it everywhere, green/yellow/red at a glance
-   - "Privacy-first" — nothing leaves your Mac in MVP1. No account. No tracking.
+    - "Menu bar at a glance" — roster with current times, grouped by Work / Pack / Family
+    - "Meeting finder that actually works" — pick a time, see it everywhere, green/yellow/red at a glance
+    - "Privacy-first" — nothing leaves your Mac in MVP1. No account. No tracking.
 4. **Screenshots** — 2-3 placeholder boxes (aspect 16:10), comment `// TODO: drop screenshots when submitted to App Store`
 5. **Footer** — © 2026 MrDemonWolf, Inc. · Made with ❤️ in Beloit, WI · links to Terms, Privacy, GitHub, mrdemonwolf.com
 
@@ -479,6 +498,7 @@ Use brand colors (`bg-[#091533]` hero, `bg-[#0FACED]` CTAs). All Tailwind utilit
 ### Phase 19 — Docs content (MDX)
 
 `apps/docs/content/docs/`:
+
 - [ ] `meta.json` with page ordering
 - [ ] `index.mdx` — docs home
 - [ ] `getting-started.mdx` — install, first run
@@ -493,12 +513,14 @@ Use brand colors (`bg-[#091533]` hero, `bg-[#0FACED]` CTAs). All Tailwind utilit
 `apps/docs/src/app/legal/layout.tsx` — centered prose layout (not docs sidebar), max-w-2xl.
 
 `apps/docs/src/app/legal/terms/page.tsx` — Terms of Service:
+
 - Last updated: today's date
 - Plain language, no legalese
 - Cover: acceptance of terms, license to use, local-only nature (MVP1), no warranty, limitation of liability, governing law (Wisconsin, USA — Nathanial is in Beloit, WI), changes to terms, contact `support@mrdemonwolf.com`
 - Keep under 800 words
 
 `apps/docs/src/app/legal/privacy/page.tsx` — Privacy Policy:
+
 - Last updated: today's date
 - Plain language
 - **Lead with:** "DenTime for macOS (MVP1) collects nothing. Everything stays on your device."
@@ -525,45 +547,45 @@ Use brand colors (`bg-[#091533]` hero, `bg-[#0FACED]` CTAs). All Tailwind utilit
 name: Deploy Docs to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/docs/**'
-      - 'packages/**'
-      - '.github/workflows/deploy-docs.yml'
-  workflow_dispatch:
+    push:
+        branches: [main]
+        paths:
+            - "apps/docs/**"
+            - "packages/**"
+            - ".github/workflows/deploy-docs.yml"
+    workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+    contents: read
+    pages: write
+    id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+    group: pages
+    cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: cd apps/docs && bun run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: apps/docs/out
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+            - run: bun install --frozen-lockfile
+            - run: cd apps/docs && bun run build
+            - uses: actions/configure-pages@v5
+            - uses: actions/upload-pages-artifact@v3
+              with:
+                  path: apps/docs/out
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - id: deployment
+              uses: actions/deploy-pages@v4
 ```
 
 - [ ] Create workflow file
@@ -572,6 +594,7 @@ jobs:
 ### Phase 23 — CI workflow
 
 `.github/workflows/ci.yml` — read fangdash's CI workflow, replicate. Runs on every PR:
+
 - [ ] Typecheck (`bun typecheck`)
 - [ ] Lint (`bun lint`)
 - [ ] Format check (`bun format:check`)
@@ -611,6 +634,7 @@ Read `~/Code/fangdash/CLAUDE.md`. Write our equivalent at `dentime/CLAUDE.md`:
 ## [Unreleased]
 
 ### Added
+
 - macOS menu bar app with roster (grouped) and meeting finder
 - Fumadocs docs site deployed to GitHub Pages
 - Terms of Service and Privacy Policy
@@ -652,25 +676,28 @@ gh repo edit MrDemonWolf/dentime \
 
 - [ ] `git add .`
 - [ ] `git commit -m "feat: MVP1 - macOS menu bar app + Fumadocs docs site`
-  ```
-  
-  macOS:
-  - SwiftUI menu bar app, macOS 13+
-  - Roster with groups (default tab)
-  - Meeting time finder
-  - Settings (time format, working hours, launch at login)
-  - App Store submittable (Sandbox + Hardened Runtime + Privacy Manifest)
-  
-  Docs:
-  - Fumadocs + Next.js static export
-  - Deployed to GitHub Pages at mrdemonwolf.github.io/dentime
-  - Landing, docs, legal (TOS + Privacy)
-  
-  Tooling:
-  - Turborepo + bun workspaces (fangdash pattern)
-  - Vitest, ESLint flat config, Prettier
-  - GitHub Actions for CI + docs deploy
-  "`
+
+    ```
+
+    macOS:
+    - SwiftUI menu bar app, macOS 13+
+    - Roster with groups (default tab)
+    - Meeting time finder
+    - Settings (time format, working hours, launch at login)
+    - App Store submittable (Sandbox + Hardened Runtime + Privacy Manifest)
+
+    Docs:
+    - Fumadocs + Next.js static export
+    - Deployed to GitHub Pages at mrdemonwolf.github.io/dentime
+    - Landing, docs, legal (TOS + Privacy)
+
+    Tooling:
+    - Turborepo + bun workspaces (fangdash pattern)
+    - Vitest, ESLint flat config, Prettier
+    - GitHub Actions for CI + docs deploy
+    "`
+    ```
+
 - [ ] `git push origin main`
 
 ### Phase 29 — Apply solo-main branch protection (USE THE SKILL)
@@ -683,14 +710,15 @@ gh repo edit MrDemonWolf/dentime \
 ### Phase 30 — Summary
 
 Print:
+
 1. File counts: Swift files, TS files, MDX files, total lines
 2. Phases completed vs skipped (with reasons for any skips)
 3. What Nathanial needs to do manually:
-   - Open Xcode, verify signing
-   - Enable GitHub Pages in repo Settings → Pages → Source: GitHub Actions
-   - Wait for GitHub Actions to finish first deploy (~3 min)
-   - Verify `https://mrdemonwolf.github.io/dentime` loads
-   - Run Archive → Validate in Xcode
+    - Open Xcode, verify signing
+    - Enable GitHub Pages in repo Settings → Pages → Source: GitHub Actions
+    - Wait for GitHub Actions to finish first deploy (~3 min)
+    - Verify `https://mrdemonwolf.github.io/dentime` loads
+    - Run Archive → Validate in Xcode
 4. Known rough edges
 5. Status: **"MVP1 hackathon-shippable. macOS app App Store-submittable pending Nathanial's validation. Docs site deployed pending GitHub Pages source config."**
 
@@ -706,10 +734,12 @@ Print:
 - **5.1.2** Data minimization → we collect nothing in MVP1
 
 Menu bar specifics:
+
 - `LSUIElement = YES` hides dock
 - `⌘Q` wired
 - `SMAppService.mainApp` for launch-at-login (not deprecated `LSSharedFileList`)
 
 Privacy Manifest (`PrivacyInfo.xcprivacy`) required as of May 2024:
+
 - Declare UserDefaults use with reason `CA92.1`
 - `NSPrivacyTracking = false`, empty arrays for everything else in MVP1
