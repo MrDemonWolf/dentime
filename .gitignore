@@ -16,6 +16,10 @@ out/
 .source/
 next-env.d.ts
 
+# TypeScript incremental build cache. Rewritten on every typecheck, so
+# tracking it makes `git pull` fail for anyone who has built locally.
+*.tsbuildinfo
+
 # Environment
 .env
 .env.*
