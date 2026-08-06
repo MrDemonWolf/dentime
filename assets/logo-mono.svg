@@ -1,0 +1,20 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+    Monochrome menu bar variant.
+    Pure black on transparent - macOS "Template Image" handles tinting.
+    No clock face (invisible at 22px).
+    No rounded-square background (menu bar icons are transparent).
+    Simplified paw silhouette optimized for 22×22 rendering.
+  -->
+  <g fill="black">
+    <ellipse cx="320" cy="400" rx="80" ry="105" transform="rotate(-12 320 400)"/>
+    <ellipse cx="440" cy="320" rx="80" ry="105" transform="rotate(-4 440 320)"/>
+    <ellipse cx="584" cy="320" rx="80" ry="105" transform="rotate(4 584 320)"/>
+    <ellipse cx="704" cy="400" rx="80" ry="105" transform="rotate(12 704 400)"/>
+    <path d="M 512 480
+             C 340 480, 260 620, 320 760
+             C 360 840, 440 870, 512 870
+             C 584 870, 664 840, 704 760
+             C 764 620, 684 480, 512 480 Z"/>
+  </g>
+</svg>

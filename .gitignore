@@ -1,1 +1,43 @@
 .DS_Store
+
+# Bun / node
+node_modules/
+.bun/
+*.log
+npm-debug.log*
+bun-debug.log*
+
+# Turborepo
+.turbo/
+
+# Next.js / Fumadocs
+.next/
+out/
+.source/
+next-env.d.ts
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# XcodeGen output — regenerate with `xcodegen generate`
+apps/apple/DenTime.xcodeproj/
+
+# Swift Package Manager
+# Note: no `Packages/` rule here. macOS filesystems are case-insensitive by default,
+# so it would silently ignore this repo's own `packages/` directory.
+.build/
+.swiftpm/
