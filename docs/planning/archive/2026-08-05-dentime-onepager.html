@@ -1,0 +1,390 @@
+<!--
+  ARCHIVED 2026-08-06. Do not build from this document.
+
+  Preserved exactly as written on 2026-08-05, apart from the banner added at the top of
+  <body>. Its "Stack & storage" section describes a Cloudflare Workers + Hono + Drizzle +
+  D1 + Better Auth backend that no longer exists, and its platform plan assumes four
+  platforms across three submissions. CloudKit is now the entire backend and macOS ships
+  alone first.
+
+  Current source of truth: docs/planning/DECISIONS.md
+  What changed and why:    docs/planning/archive/README.md
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DenTime — everything, one page (ARCHIVED)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#091533;--navy-2:#0E1D42;--navy-3:#152750;
+  --cyan:#0FACED;--ice:#DCE8F5;--dim:#8DA2C0;
+  --red:#FF5F56;--amber:#FFB84D;--green:#3DD68C;
+  --rule:rgba(141,162,192,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{background:var(--navy);color:var(--ice);font-family:'Inter',-apple-system,system-ui,sans-serif;font-size:16px;line-height:1.62;padding-bottom:120px}
+.wrap{max-width:880px;margin:0 auto;padding:0 24px}
+
+/* archived banner — the only edit made to this document */
+.archived{background:#3A1113;border-bottom:2px solid var(--red);color:#FFD9D6;padding:18px 0}
+.archived .wrap{max-width:880px}
+.archived b{color:#fff;display:block;font-size:17px;margin-bottom:6px;font-family:'Bricolage Grotesque',sans-serif}
+.archived p{font-size:14.5px;line-height:1.6}
+.archived code{background:rgba(255,255,255,.1);color:#FFD9D6;padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12.5px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(9,21,51,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--rule)}
+.navin{max-width:880px;margin:0 auto;padding:12px 24px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.navin::-webkit-scrollbar{display:none}
+nav a{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.03em;
+  color:var(--dim);text-decoration:none;padding:6px 10px;border-radius:6px;white-space:nowrap;
+  transition:all .15s;
+}
+nav a:hover{color:var(--cyan);background:rgba(15,172,237,.1)}
+nav a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* hero */
+header{padding:60px 0 44px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:18px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(36px,6.5vw,58px);line-height:1.03;letter-spacing:-.02em;color:#fff;margin-bottom:18px}
+.sub{font-size:19px;color:var(--ice);max-width:58ch;border-left:3px solid var(--cyan);padding-left:18px}
+.sub b{color:#fff;font-weight:600}
+.stamp{margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
+
+/* section */
+.track{height:2px;background:var(--rule);border-radius:2px;position:relative;margin:0}
+.track::after{content:"";position:absolute;top:-4px;left:var(--pos,0%);width:10px;height:10px;border-radius:50%;background:var(--cyan)}
+section{padding:46px 0 0}
+h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:27px;letter-spacing:-.01em;color:#fff;margin-bottom:8px}
+.lede{color:var(--dim);font-size:15px;max-width:66ch;margin-bottom:22px}
+h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:18px;color:#fff;margin:26px 0 10px}
+
+/* cards */
+.card{background:var(--navy-2);border-radius:11px;padding:17px 19px;margin-bottom:10px;border-left:3px solid var(--rule)}
+.card.cy{border-left-color:var(--cyan)}
+.card.rd{border-left-color:var(--red)}
+.card.am{border-left-color:var(--amber)}
+.card.gr{border-left-color:var(--green)}
+.card .t{font-weight:600;color:#fff;display:block;margin-bottom:4px;font-size:16px}
+.card .d{font-size:14.5px;color:var(--dim);line-height:1.55}
+.card .d b{color:var(--ice);font-weight:500}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+
+/* numbered next actions */
+ol.next{list-style:none;counter-reset:n}
+ol.next li{
+  counter-increment:n;background:var(--navy-2);border-radius:11px;padding:17px 19px 17px 60px;
+  margin-bottom:10px;position:relative;border-left:3px solid var(--cyan);
+}
+ol.next li::before{
+  content:counter(n);position:absolute;left:19px;top:15px;
+  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;color:var(--cyan);
+}
+ol.next .t{font-weight:600;color:#fff;display:block;margin-bottom:3px}
+ol.next .d{font-size:14.5px;color:var(--dim)}
+
+/* checklist */
+.chk{display:flex;gap:13px;align-items:flex-start;background:var(--navy-2);border-radius:10px;padding:15px 17px;margin-bottom:9px;border-left:3px solid var(--rule);transition:opacity .15s}
+.chk.rd{border-left-color:var(--red)}
+.chk.am{border-left-color:var(--amber)}
+.chk.done{opacity:.38}
+.chk.done .t{text-decoration:line-through}
+.box{flex:none;width:21px;height:21px;margin-top:2px;border-radius:6px;border:2px solid var(--dim);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all .15s}
+.box:hover{border-color:var(--cyan)}
+.box:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.box[aria-checked="true"]{background:var(--cyan);border-color:var(--cyan)}
+.box svg{width:11px;height:11px;opacity:0}
+.box[aria-checked="true"] svg{opacity:1}
+.chk .t{font-weight:600;color:#fff;display:block;margin-bottom:3px;font-size:15.5px}
+.chk .d{font-size:14px;color:var(--dim);line-height:1.5}
+.cnt{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);margin-bottom:14px}
+
+/* details */
+details{background:var(--navy-2);border-radius:11px;margin-bottom:9px;border:1px solid var(--rule);overflow:hidden}
+summary{padding:15px 19px;cursor:pointer;font-weight:600;color:#fff;font-size:15.5px;list-style:none;display:flex;align-items:center;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"›";color:var(--cyan);font-size:20px;line-height:1;transition:transform .18s;display:inline-block}
+details[open] summary::before{transform:rotate(90deg)}
+summary:hover{background:var(--navy-3)}
+summary:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
+.dbody{padding:0 19px 17px 42px;font-size:14.5px;color:var(--dim);line-height:1.6}
+.dbody b{color:var(--ice);font-weight:500}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:8px 0 4px}
+th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan);padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);font-weight:500}
+td{padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);color:var(--dim);vertical-align:top}
+td:first-child{color:var(--ice);font-weight:500;white-space:nowrap}
+
+code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:rgba(15,172,237,.12);color:var(--cyan);padding:1px 6px;border-radius:4px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:5px;background:rgba(141,162,192,.13);color:var(--dim);margin-right:6px;display:inline-block;margin-top:8px}
+.tag.cy{background:rgba(15,172,237,.14);color:var(--cyan)}
+.tag.rd{background:rgba(255,95,86,.14);color:var(--red)}
+
+.kill{color:var(--dim);font-size:14.5px;line-height:1.9}
+.kill span{color:var(--red);font-family:'JetBrains Mono',monospace;font-size:12px;margin-right:8px}
+
+footer{margin-top:60px;padding-top:26px;border-top:1px solid var(--rule);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
+
+@media (max-width:620px){
+  .wrap{padding:0 18px}.navin{padding:10px 18px}
+  header{padding:40px 0 30px}
+  .dbody{padding-left:19px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="archived"><div class="wrap">
+  <b>⚠ Archived 2026-08-05 — do not build from this page</b>
+  <p>The <strong>Stack &amp; storage</strong> section below describes a Hono + Drizzle backend on Cloudflare Workers + D1 with Better Auth. <strong>That stack is dead.</strong> CloudKit is now the entire backend — no server, no database, no auth code. The platform plan below also assumes four platforms across three submissions; macOS now ships alone first.</p>
+  <p>Everything else here — the language rules, the locked decisions, the pricing reasoning, the Apple checklist — survived into the current docs. Current source of truth: <code>docs/planning/DECISIONS.md</code>. What changed and why: <code>docs/planning/archive/README.md</code>.</p>
+</div></div>
+
+<nav><div class="navin">
+  <a href="#next">next</a>
+  <a href="#what">what it is</a>
+  <a href="#screens">the two tabs</a>
+  <a href="#locked">locked</a>
+  <a href="#price">price</a>
+  <a href="#platforms">platforms</a>
+  <a href="#stack">stack</a>
+  <a href="#apple">apple</a>
+  <a href="#cut">cut</a>
+  <a href="#docs">the docs</a>
+</div></nav>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">DenTime · MrDemonWolf, Inc. · everything on one page</div>
+  <h1>Make plans with your pack, wherever they are.</h1>
+  <p class="sub">A <b>$9.99 macOS menu bar app</b> that keeps a roster of your people, shows their local time, and runs Doodle-style polls to pick a night that works for everyone.</p>
+  <div class="stamp">Spec locked 5 Aug 2026 · design not started · no code yet</div>
+</header>
+
+<div class="track" style="--pos:6%"></div>
+
+<section id="next">
+  <h2>🚀 Do these three next</h2>
+  <p class="lede">In this order. Everything else can wait.</p>
+  <ol class="next">
+    <li><span class="t">Hand DESIGN-BRIEF.md to Claude Design</span><span class="d">16 screens. Screens 1, 6, 8 and 9 are the core loop — those first.</span></li>
+    <li><span class="t">Hand CC-SCAFFOLD.md to Claude Code</span><span class="d">Repo only. It has a hard scope boundary telling it not to build any UI. Runs in parallel with the design work.</span></li>
+    <li><span class="t">Fix the bundle IDs before anything ships</span><span class="d">Mac, iOS and iPad must all be <code>com.mrdemonwolf.dentime</code>. Five minutes now, unfixable later.</span></li>
+  </ol>
+</section>
+
+<div class="track" style="--pos:16%"></div>
+
+<section id="what">
+  <h2>🎯 What it is, and what it isn't</h2>
+  <div class="grid">
+    <div class="card gr"><span class="t">It is</span><span class="d">A way to pick a night that works for friends spread across timezones. Movie night, raid night, D&amp;D session, con meetup.</span></div>
+    <div class="card rd"><span class="t">It is not a world clock</span><span class="d">Eight of those already ship at $0.99–$4. The time scrubber is table stakes, not a feature.</span></div>
+    <div class="card rd"><span class="t">It is not a "group scheduler"</span><span class="d">Work-coded phrase. Files it next to Doodle and Calendly. Nobody adopts a work tool for movie night — but people happily use a friend tool at work.</span></div>
+    <div class="card cy"><span class="t">The gap it fills</span><span class="d">Nobody combines a persistent people roster with group polling, natively, for friend groups. Doodle went web-only in 2025. When2Meet is a 2008 grid. Every roster tool was sold to remote-work teams and most are dead.</span></div>
+  </div>
+  <h3>Language rules</h3>
+  <p class="lede">Applies to app copy, docs, and the App Store listing.</p>
+  <table>
+    <tr><th>Never</th><th>Instead</th></tr>
+    <tr><td>Schedule a meeting</td><td>Make a plan</td></tr>
+    <tr><td>Availability</td><td>Who's around</td></tr>
+    <tr><td>Invite participants</td><td>Share the code</td></tr>
+    <tr><td>Organizer</td><td>Host</td></tr>
+    <tr><td>Attendees</td><td>Who's in</td></tr>
+    <tr><td>Team</td><td>Pack</td></tr>
+    <tr><td>Contacts, roster</td><td>Your den</td></tr>
+  </table>
+  <p class="lede" style="margin-top:14px">Sample data reads "movie night", never "Q3 planning sync". A <b>meeting</b> is work; a <b>meetup</b> is social, so that word stays.</p>
+</section>
+
+<div class="track" style="--pos:28%"></div>
+
+<section id="screens">
+  <h2>🗂️ Two tabs. That's the whole app.</h2>
+
+  <details open><summary>Tab 1 — Den (opens here)</summary><div class="dbody">
+    Person rows: avatar, name, their local time, timezone.<br>
+    <b>Packs</b> — collapsible groups, LocalWP-style, drag people between them.<br>
+    <b>Time Peek</b> — a scrubber at the top. Drag it and every time updates live. Fully client-side, never touches the network.<br>
+    Add via friend code <code>DEN·XXXX-XXXX</code>, or manually for people who don't use DenTime.<br>
+    <b>Block</b> on any row.
+  </div></details>
+
+  <details open><summary>Tab 2 — Meetups (the reason people download it)</summary><div class="dbody">
+    Host proposes 2–5 time slots. App generates <code>HOWL·XXXX-XXXX</code>.<br>
+    Host pastes that code into Discord, group chat, wherever the pack already talks. <b>DenTime sends nothing anywhere.</b><br>
+    Anyone with the code joins by entering it. Everyone sees the slots in their own local time.<br>
+    RSVP yes / no / maybe. Host sees a grid of who's in on what.<br>
+    <b>No title field.</b> A meetup shows as "Nathanial's meetup" plus its date range.
+  </div></details>
+
+  <details><summary>Why join-by-code instead of invites</summary><div class="dbody">
+    A push invite is a channel someone can aim at you unasked, and friend codes get shared publicly in Discord and Twitch chat. Removing the push removes the abuse vector entirely — and it's how people already share Doodle links.<br><br>
+    It also deleted a notification system and an invite state machine from the build.
+  </div></details>
+</section>
+
+<div class="track" style="--pos:40%"></div>
+
+<section id="locked">
+  <h2>🔒 Locked decisions</h2>
+  <p class="lede">Each one has a reason. Open it before relitigating.</p>
+
+  <details><summary>Two tabs, not three</summary><div class="dbody">"Find a Time" was Time Peek under a second name. Time Peek is a scrubber inside Den, not its own tab. One less concept to explain.</div></details>
+
+  <details><summary>Design for friend groups, market to all three</summary><div class="dbody">Designing for friends + teams + clients at once makes every screen slightly wrong for everyone. Packs solve it for free — a pack named "Acme Corp" behaves identically to "the boys". One design language, three landing page sections.</div></details>
+
+  <details><summary>A Vocabulary setting that swaps seven nouns</summary><div class="dbody">Settings → General → <b>Den (default) / Team</b>. Swaps Den→Team, Pack→Group, Host→Organizer, Meetup→Meeting, Friend code→Member code, Who's in→Attending, Make a plan→Schedule.<br><br>
+  <b>The voice does not change.</b> Same verbs, buttons, errors, tone. A work user isn't put off by friendly copy — they're put off by screenshotting "your pack" into a client Slack channel. Fix the nouns, leave the voice.<br><br>
+  Den mode is the only mode in App Store screenshots.</div></details>
+
+  <details><summary>All-native SwiftUI, one Xcode project</summary><div class="dbody">Not React Native — <code>react-native-macos</code> doesn't support menu bar extras as a first-class surface. Not three Xcode projects — watchOS can't build standalone and iPad is a checkbox, not a target.<br><br><code>apps/apple</code> sits outside Turborepo's build graph. Xcode builds it; Turborepo never touches it.</div></details>
+
+  <details><summary>Moderation is handled by design, not a team</summary><div class="dbody">No free-text titles means display names are the <b>only</b> user-written text in the app. No push invites means nobody can reach you unasked. What's left: Block, a Report menu item that opens a prefilled email, rotate-my-friend-code, and a contact paragraph on the site.<br><br>Result: a reviewer finds a planning tool with a block button, not a social network.</div></details>
+</section>
+
+<div class="track" style="--pos:52%"></div>
+
+<section id="price">
+  <h2>💰 $9.99. Paid. That's it.</h2>
+  <div class="grid">
+    <div class="card cy"><span class="t">Price</span><span class="d">$9.99 listed on the App Store</span></div>
+    <div class="card"><span class="t">Free tier</span><span class="d">None</span></div>
+    <div class="card"><span class="t">Trial</span><span class="d">None</span></div>
+    <div class="card"><span class="t">In-app purchases</span><span class="d">None — StoreKit isn't in the project</span></div>
+  </div>
+
+  <div class="card rd" style="margin-top:14px">
+    <span class="t">⚠️ Universal Purchase — the one that costs money if you miss it</span>
+    <span class="d">One purchase must cover Mac, iPhone, iPad and Watch. That requires <b>every platform target to share one bundle ID</b>: <code>com.mrdemonwolf.dentime</code>. Ship Mac as <code>.dentime</code> and iOS as <code>.dentime.mobile</code> and they become two separate $9.99 products — your Mac buyers pay again on their phone. Trivial now, unfixable after launch. Turn on Family Sharing while you're in there.</span>
+  </div>
+
+  <details style="margin-top:10px"><summary>What paid-up-front deletes from the build</summary><div class="dbody">No unlocks table, no entitlement checks, no StoreKit code, no Restore Purchases button (ownership follows the Apple ID), no paywall screen, no upgrade prompts. Most of guideline 3.1 stops applying.</div></details>
+
+  <details><summary>The tradeoff, and the thing not to do</summary><div class="dbody">
+  <b>Tradeoff:</b> everyone joining a meetup has to own the app. DenTime works inside a group that's all bought in, not across a group where one person owns it. Deliberate — simplicity over reach.<br><br>
+  <b>Don't:</b> a free download that opens onto a paywall is a 2.1 rejection. Apple treats a non-functional free app as a demo. Paid means paid on the listing; there's no middle ground.<br><br>
+  <b>Why $9.99:</b> menu bar clocks sell for $0.99–$4. This has a backend and a network behind it.</div></details>
+</section>
+
+<div class="track" style="--pos:62%"></div>
+
+<section id="platforms">
+  <h2>🖥️ Four platforms, three submissions</h2>
+  <table>
+    <tr><th>Platform</th><th>Ships</th><th>Scope</th></tr>
+    <tr><td>macOS</td><td>1st</td><td>Menu bar extra. Den + Meetups. The real app.</td></tr>
+    <tr><td>iOS</td><td>2nd</td><td>Den, Time Peek, create and join meetups, RSVP.</td></tr>
+    <tr><td>iPadOS</td><td>with iOS</td><td>Same target. Real split view — packs sidebar + detail. Not a stretched iPhone, or it's a rejection.</td></tr>
+    <tr><td>watchOS</td><td>with iOS</td><td>Complication with one pinned person's time. Den glance. RSVP. No creating meetups.</td></tr>
+  </table>
+  <p class="lede" style="margin-top:14px">All four targets exist in the Xcode project from day one. A watchOS app is embedded in its iOS host and can't be submitted alone, so iOS and watchOS ship together.</p>
+</section>
+
+<div class="track" style="--pos:72%"></div>
+
+<section id="stack">
+  <h2>⚙️ Stack &amp; storage</h2>
+  <table>
+    <tr><th>Layer</th><th>Choice</th></tr>
+    <tr><td>Apple apps</td><td>SwiftUI, zero web views. <code>DenTimeCore</code> Swift package shared across targets.</td></tr>
+    <tr><td>API</td><td>Hono + Drizzle on Cloudflare Workers + D1</td></tr>
+    <tr><td>Auth</td><td>Sign in with Apple only. Better Auth. HS256 JWT, 24h, no refresh tokens.</td></tr>
+    <tr><td>Monorepo</td><td>Bun workspaces + Turborepo. TypeScript everywhere on the backend.</td></tr>
+    <tr><td>Docs</td><td>Fumadocs → GitHub Pages at <code>mrdemonwolf.github.io/dentime</code>, fronted by <code>dentime.mrdemonwolf.com</code></td></tr>
+    <tr><td>Logging</td><td>Better Stack</td></tr>
+  </table>
+
+  <h3>Storage — not a concern, but three rules keep it that way</h3>
+  <div class="card"><span class="t">Integer primary keys, not UUID text</span><span class="d">A UUID as TEXT is 36 bytes and repeats through every foreign key and index. <code>friend_code</code> and <code>join_code</code> stay the public identifiers. Roughly halves storage.</span></div>
+  <div class="card"><span class="t">Purge meetups older than 90 days</span><span class="d">Cron-triggered Worker. Ever-growing event tables are how people hit D1's 10 GB per-database wall.</span></div>
+  <div class="card"><span class="t">Watch rows-read, not bytes</span><span class="d">Free plan is 5M reads/day, and a D1 database is single-threaded. Throughput is the real ceiling, not disk.</span></div>
+  <div class="card gr"><span class="t">For scale: blocks cost nothing</span><span class="d">~200 bytes a row. A million blocks is 200 MB — 2% of the cap. Projection at 10,000 active users: ~250 MB after year one. Time Peek being client-side means watching your den tick never hits the database at all.</span></div>
+
+  <p class="lede" style="margin-top:16px">App Store Connect gets the <b>custom domain</b> for privacy and support URLs, not the github.io path — a <code>.github.io/subpath</code> privacy policy reads as less established, and the custom domain means you can move hosts without the links rotting.</p>
+</section>
+
+<div class="track" style="--pos:84%"></div>
+
+<section id="apple">
+  <h2>🍎 App Store: not safe yet, but close</h2>
+  <p class="lede">7 build items, none architectural. Roughly a day of work. Full detail lives in <code>app-store-readiness.html</code>.</p>
+  <div class="cnt" id="c1">0 / 7 done</div>
+
+  <div class="chk rd"><button class="box" role="checkbox" aria-checked="false" aria-label="Toggle"><svg viewBox="0 0 12 12" fill="none" stroke="#091533" stroke-width="2.5" stroke-linecap="round"><path d="M1.5 6.2 4.4 9 10.5 2.8"/></svg></button><div><span class="t">Delete account, in the app</span><span class="d">5.1.1(v), auto-reject if missing. Settings → Account, two taps, hard-deletes server-side. ~2 hrs.</span></div></div>
+
+  <div class="chk rd"><button class="box" role="checkbox" aria-checked="false" aria-label="Toggle"><svg viewBox="0 0 12 12" fill="none" stroke="#091533" stroke-width="2.5" stroke-linecap="round"><path d="M1.5 6.2 4.4 9 10.5 2.8"/></svg></button><div><span class="t">One bundle ID across every platform</span><span class="d">Universal Purchase. ~5 min now, unfixable later.</span></div></div>
+
+  <div class="chk rd"><button class="box" role="checkbox" aria-checked="false" aria-label="Toggle"><svg viewBox="0 0 12 12" fill="none" stroke="#091533" stroke-width="2.5" stroke-linecap="round"><path d="M1.5 6.2 4.4 9 10.5 2.8"/></svg></button><div><span class="t">Block, on roster rows and participant rows</span><span class="d">Display names are user-written text shown to others. ~3 hrs.</span></div></div>
+
+  <div class="chk rd"><button class="box" role="checkbox" aria-checked="false" aria-label="Toggle"><svg viewBox="0 0 12 12" fill="none" stroke="#091533" stroke-width="2.5" stroke-linecap="round"><path d="M1.5 6.2 4.4 9 10.5 2.8"/></svg></button><div><span class="t">Report — prefilled email, one menu item</span><span class="d">Satisfies "a mechanism to report offensive content". ~15 min.</span></div></div>
+
+  <div class="chk rd"><button class="box" role="checkbox" aria-checked="false" aria-label="Toggle"><svg viewBox="0 0 12 12" fill="none" stroke="#091533" stroke-width="2.5" stroke-linecap="round"><path d="M1.5 6.2 4.4 9 10.5 2.8"/></svg></button><div><span class="t">Privacy policy + support page live, returning 200</span><span class="d">Both get opened by the reviewer. Support page carries contact info and a 24-hour response line. ~2 hrs.</span></div></div>
+
+  <div class="chk rd"><button class="box" role="checkbox" aria-checked="false" aria-label="Toggle"><svg viewBox="0 0 12 12" fill="none" stroke="#091533" stroke-width="2.5" stroke-linecap="round"><path d="M1.5 6.2 4.4 9 10.5 2.8"/></svg></button><div><span class="t">Real iPad layout, or turn iPad off</span><span class="d">A stretched iPhone UI on iPad is a rejection. Split view, or drop it from the device family.</span></div></div>
+
+  <div class="chk rd"><button class="box" role="checkbox" aria-checked="false" aria-label="Toggle"><svg viewBox="0 0 12 12" fill="none" stroke="#091533" stroke-width="2.5" stroke-linecap="round"><path d="M1.5 6.2 4.4 9 10.5 2.8"/></svg></button><div><span class="t">Seeded demo account + reviewer notes</span><span class="d">Do this one first — it flips three amber risks green at once. A reviewer who lands in a working den never wonders whether this is "just a world clock". ~2 hrs.</span></div></div>
+
+  <details style="margin-top:16px"><summary>Already handled by the design — 8 problems that no longer exist</summary><div class="dbody">
+  No calendar permissions at all · Sign in with Apple only satisfies 4.8 · join-by-code means no unsolicited contact · no free-text titles means display names are the only UGC · paid up front means guideline 3.1 barely applies · no tracking SDKs so no ATT prompt · minimal data collection means a short honest nutrition label · submitted by MrDemonWolf, Inc. rather than a personal account.
+  </div></details>
+</section>
+
+<div class="track" style="--pos:93%"></div>
+
+<section id="cut">
+  <h2>🚫 Cut, and staying cut</h2>
+  <p class="kill">
+    <span>✕</span>Calendar integration — busy shading, conflict warnings, Add to Calendar, <code>.ics</code><br>
+    <span>✕</span>Subscriptions, trials, free tiers, paywalls<br>
+    <span>✕</span>Push invites and notifications of any kind<br>
+    <span>✕</span>Free-text meetup titles and descriptions<br>
+    <span>✕</span>Availability / working hours per person<br>
+    <span>✕</span>Recurring meetups<br>
+    <span>✕</span>Web app, Android, team billing, seats
+  </p>
+  <div class="card cy" style="margin-top:16px"><span class="t">The one worth building later</span><span class="d"><b>Shared free/busy</b> — devices uploading coarse busy blocks so slots show green/red for everyone. This is the version that makes DenTime genuinely magic, and it's a real privacy product: opt-in per pack, busy/free only, never titles, explicit retention, one-tap purge. Its own release. Not a bolt-on.</span></div>
+</section>
+
+<div class="track" style="--pos:99%"></div>
+
+<section id="docs">
+  <h2>📁 The four documents</h2>
+  <div class="card cy"><span class="t">DESIGN-BRIEF.md → Claude Design</span><span class="d">16 screens across macOS, iPad and watch. Opens with a "what changed" delta list so it knows what to strip from existing mockups.</span><span class="tag cy">start here</span></div>
+  <div class="card cy"><span class="t">CC-SCAFFOLD.md → Claude Code</span><span class="d">Repo scaffold only. Hard scope boundary at the top: no UI, no features. "Zero feature UI exists anywhere" is a pass condition.</span><span class="tag cy">runs in parallel</span></div>
+  <div class="card"><span class="t">DENTIME-SPEC.md → Notion</span><span class="d">The locked spec. Source of truth when the other two disagree.</span></div>
+  <div class="card"><span class="t">app-store-readiness.html</span><span class="d">Full Apple detail with guideline numbers and time estimates. Re-run the real audit after your first TestFlight, and again the day you submit.</span></div>
+</section>
+
+<footer>DenTime · MrDemonWolf, Inc. · concept stage · checkboxes reset on reload</footer>
+
+</div>
+
+<script>
+document.querySelectorAll('.box').forEach(function(b){
+  function t(){
+    var on=b.getAttribute('aria-checked')==='true';
+    b.setAttribute('aria-checked',on?'false':'true');
+    b.closest('.chk').classList.toggle('done',!on);
+    var all=document.querySelectorAll('#apple .box'),
+        hit=document.querySelectorAll('#apple .box[aria-checked="true"]');
+    document.getElementById('c1').textContent=hit.length+' / '+all.length+' done';
+  }
+  b.addEventListener('click',t);
+  b.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();t();}});
+});
+</script>
+</body>
+</html>
