@@ -35,7 +35,7 @@ Everything is scaffolding. There is no feature UI, and that is deliberate.
 
 **Working:** everything that can be verified on Linux. `bun install`, `bun run check`, `bun run typecheck`, `bun run test`, `bun run build` all pass from a clean clone. The Swift package builds and tests green on the macOS CI runner. The docs site is deployed.
 
-**Never run anywhere:** `xcodegen generate` and `xcodebuild`. There is no Xcode on the machine that wrote `project.yml`, so the Xcode project has never been generated or opened. This is the single biggest unknown in the repo and the first thing to do on the Mac.
+**Unverified — not yet run anywhere:** `xcodegen generate` and `xcodebuild`. There is no Xcode on the machine that wrote `project.yml`, so the Xcode project has never been generated or opened. This is the single biggest unknown in the repo, and running those two commands is the first task below.
 
 **Not started:** every phase from 2 onward. No CloudKit container exists yet.
 
