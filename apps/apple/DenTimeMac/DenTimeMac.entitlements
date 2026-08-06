@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- CloudKit is the entire backend. There is no server, and no other network host
+         is ever contacted. See docs/planning/DECISIONS.md, decision 1. -->
+    <key>com.apple.developer.icloud-container-identifiers</key>
+    <array>
+        <string>iCloud.com.mrdemonwolf.dentime</string>
+    </array>
+    <key>com.apple.developer.icloud-services</key>
+    <array>
+        <string>CloudKit</string>
+    </array>
+
+    <!-- Sign in with Apple is the only sign-in method, which by itself satisfies
+         guideline 4.8. -->
+    <key>com.apple.developer.applesignin</key>
+    <array>
+        <string>Default</string>
+    </array>
+
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <key>com.apple.security.network.client</key>
+    <true/>
+
+    <!-- Deliberately absent, and staying absent: EventKit, contacts, location, camera,
+         microphone, and anything StoreKit needs. Calendar integration and in-app
+         purchases are both out of scope, and both are pass conditions in the
+         definition of done. -->
+</dict>
+</plist>
