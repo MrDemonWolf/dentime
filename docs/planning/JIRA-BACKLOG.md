@@ -234,7 +234,7 @@ Copy the reviewed v2 mockup out of the Claude Design project and into the repo a
 phase-1, design, docs
 ```
 
-### TIME-16 — Configure GitHub Pages and verify the deploy
+### TIME-16 — Configure GitHub Pages and verify the deploy ✅
 
 ```
 ## Description
