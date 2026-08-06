@@ -1,0 +1,32 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"jsx": "preserve",
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"incremental": true,
+		"isolatedModules": true,
+		"allowJs": true,
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"plugins": [{ "name": "next" }],
+		"paths": {
+			"@/*": ["./src/*"],
+			"@/.source": ["./.source"],
+			"@/.source/*": ["./.source/*"]
+		},
+		"exactOptionalPropertyTypes": false,
+		"noUncheckedIndexedAccess": false
+	},
+	"include": [
+		"**/*.mjs",
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		".source/**/*.ts",
+		"next-env.d.ts",
+		"source.config.ts",
+		".next/types/**/*.ts"
+	],
+	"exclude": ["node_modules", ".next", "out"]
+}
