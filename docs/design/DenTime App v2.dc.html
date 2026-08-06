@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body { margin:0; background:#0E0F11; overflow:hidden; -webkit-font-smoothing:antialiased; }
+a { color:#0FACED; text-decoration:none; } a:hover { color:#3BBDF1; }
+input, button { font-family:inherit; }
+::selection { background:rgba(15,172,237,0.35); }
+input.rail { -webkit-appearance:none; appearance:none; background:transparent; cursor:ew-resize; margin:0; }
+input.rail::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:3px; height:36px; border-radius:2px; background:#0FACED; box-shadow:0 0 8px rgba(15,172,237,0.9); }
+input.rail::-moz-range-thumb { width:3px; height:36px; border:none; border-radius:2px; background:#0FACED; }
+</style>
+</helmet>
+<div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,sans-serif; height:100vh; position:relative; overflow:hidden; background:{{t.desk}};">
+
+  <div style="height:30px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:{{t.menub}}; backdrop-filter:blur(24px); border-bottom:1px solid {{t.hair}}; position:relative; z-index:5;">
+    <div style="display:flex; align-items:center; gap:18px; font-size:13px; color:{{t.text}};">
+      <span style="font-weight:700;">&#63743;</span>
+      <span style="font-weight:600;">Finder</span>
+      <span style="color:{{t.sub}};">File</span><span style="color:{{t.sub}};">Edit</span><span style="color:{{t.sub}};">View</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:{{t.text}};">
+      <button onClick="{{toggleDark}}" title="Toggle appearance" style="background:none; border:none; cursor:pointer; color:{{t.sub}}; font-size:13px; padding:2px 8px; border-radius:5px;" style-hover="background:{{t.rowSel}};">{{modeGlyph}}&#xFE0E;</button>
+      <button onClick="{{togglePanel}}" title="DenTime" style="display:flex; align-items:center; background:{{pawBg}}; border:none; cursor:pointer; padding:3px 9px; border-radius:5px;">
+        <span style="position:relative; width:16px; height:15px; display:inline-block;">
+          <span style="position:absolute; left:4px; top:6px; width:8px; height:7px; border-radius:50% 50% 46% 46%; background:{{t.text}};"></span>
+          <span style="position:absolute; left:1px; top:2px; width:3.5px; height:3.5px; border-radius:50%; background:{{t.text}};"></span>
+          <span style="position:absolute; left:6.2px; top:0.5px; width:3.5px; height:3.5px; border-radius:50%; background:{{t.text}};"></span>
+          <span style="position:absolute; left:11.5px; top:2px; width:3.5px; height:3.5px; border-radius:50%; background:{{t.text}};"></span>
+        </span>
+      </button>
+      <span style="font-variant-numeric:tabular-nums; padding-left:6px;">{{menuClock}}</span>
+    </div>
+  </div>
+
+  <sc-if value="{{panelOpen}}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute; top:36px; right:64px; width:360px; height:500px; border-radius:11px; background:{{t.panel}}; backdrop-filter:blur(30px); border:1px solid {{t.hair}}; box-shadow:{{t.shadow}}; display:flex; flex-direction:column; overflow:hidden; z-index:10;" data-screen-label="Menu bar panel">
+
+    <div style="padding:10px 12px 8px;">
+      <div style="display:flex; background:{{t.well}}; border-radius:8px; padding:2px;">
+        <button onClick="{{tabDen}}" style="flex:1; font-size:12px; font-weight:{{wDen}}; color:{{cDen}}; background:{{bDen}}; border:none; border-radius:6px; padding:5px 0; cursor:pointer;">{{denLabel}}</button>
+        <button onClick="{{tabMeet}}" style="flex:1; font-size:12px; font-weight:{{wMeet}}; color:{{cMeet}}; background:{{bMeet}}; border:none; border-radius:6px; padding:5px 0; cursor:pointer;">{{meetLabel}}</button>
+      </div>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; padding:0 8px 8px; display:flex; flex-direction:column;">
+
+      <sc-if value="{{cloudBlocked}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:9px; padding:70px 30px; text-align:center;" data-screen-label="iCloud unavailable">
+          <span style="font-size:26px; color:{{t.ter}};">&#9729;&#xFE0E;</span>
+          <div style="font-size:14px; font-weight:700; color:{{t.text}};">{{cloudTitle}}</div>
+          <div style="font-size:12px; color:{{t.sub}}; line-height:1.5;">{{cloudMsg}}</div>
+          <sc-if value="{{cloudHasBtn}}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{noop}}" style="font-size:12px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:6px; padding:6px 14px; cursor:pointer; margin-top:4px;">Open System Settings</button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showDen}}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{denEmpty}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:46px 26px 30px; text-align:center;" data-screen-label="Den empty state">
+            <span style="width:44px; height:44px; border-radius:11px; background:#091533; display:grid; place-items:center;">
+              <span style="position:relative; width:22px; height:21px; display:inline-block;">
+                <span style="position:absolute; left:5.5px; top:8px; width:11px; height:9.5px; border-radius:50% 50% 46% 46%; background:#0FACED;"></span>
+                <span style="position:absolute; left:1px; top:2px; width:5px; height:5px; border-radius:50%; background:#0FACED;"></span>
+                <span style="position:absolute; left:8.5px; top:0; width:5px; height:5px; border-radius:50%; background:#0FACED;"></span>
+                <span style="position:absolute; left:16px; top:2px; width:5px; height:5px; border-radius:50%; background:#0FACED;"></span>
+              </span>
+            </span>
+            <div style="font-size:15px; font-weight:700; color:{{t.text}};">{{emptyTitle}}</div>
+            <div style="font-size:12px; color:{{t.sub}}; line-height:1.5; max-width:270px;">{{emptyLine}}</div>
+            <div style="display:flex; gap:8px; margin-top:4px;">
+              <button onClick="{{openAdd}}" style="font-size:12px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:6px; padding:7px 16px; cursor:pointer;" style-hover="background:#3BBDF1;">Add someone</button>
+              <button onClick="{{copyCode}}" style="font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:7px 16px; cursor:pointer;">Share my code</button>
+            </div>
+            <button onClick="{{copyCode}}" title="Copy your code" style="display:flex; align-items:center; gap:8px; background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:999px; padding:6px 16px; cursor:pointer; margin-top:6px;">
+              <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; letter-spacing:0.08em; color:#0FACED;">{{codeDisplay}}</span>
+              <span style="font-size:10px; font-weight:600; color:{{codeColor}};">{{copyBtn}}</span>
+            </button>
+            <div style="width:100%; text-align:left; margin-top:10px;">
+              <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.12em; color:{{t.ter}}; padding:0 4px 6px;">EXAMPLES &mdash; DELETE ANYTIME</div>
+              <sc-for list="{{exampleRows}}" as="ex" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; gap:8px; background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:8px; padding:7px 11px; margin-bottom:5px;">
+                  <span style="flex:1; font-size:13px; font-weight:600; color:{{t.text}}; text-align:left;">{{ex.name}} <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; font-weight:400; color:{{t.ter}}; letter-spacing:0.08em;">{{ex.abbr}}</span></span>
+                  <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-variant-numeric:tabular-nums; font-size:14px; color:{{t.text}};">{{ex.time}}</span>
+                  <button onClick="{{ex.del}}" title="Delete example" style="background:none; border:none; cursor:pointer; color:{{t.ter}}; font-size:11px; padding:0 2px;" style-hover="color:{{t.err}};">&#10005;</button>
+                </div>
+              </sc-for>
+              <button onClick="{{tabMeet}}" style="width:100%; text-align:left; font-size:12px; font-weight:600; color:#0FACED; background:none; border:1px dashed {{t.hairStrong}}; border-radius:8px; padding:8px 11px; cursor:pointer;">{{pickNightLabel}}</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{denFull}}" hint-placeholder-val="{{ true }}">
+        <div style="margin:2px 2px 8px; background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:9px; padding:9px 11px;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:7px;">
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.12em; color:{{t.ter}};">{{scrubLeft}}</span>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.1em; color:#0FACED;">{{scrubRel}}</span>
+              <button onClick="{{scrubNow}}" style="font-size:10px; font-weight:600; color:{{t.sub}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:999px; padding:2px 9px; cursor:pointer;" style-hover="color:{{t.text}};">Now</button>
+            </span>
+          </div>
+          <div style="position:relative; height:40px; border-radius:6px; overflow:hidden; background:{{t.seg}}; border:1px solid {{t.hair}};">
+            <div style="position:absolute; inset:5px 0; background-image:repeating-linear-gradient(90deg, {{t.tick}} 0px, {{t.tick}} 1px, transparent 1px, transparent 8px);"></div>
+            <div style="position:absolute; left:0; right:0; bottom:10px; height:10px; background-image:repeating-linear-gradient(90deg, {{t.tick}} 0px, {{t.tick}} 1px, transparent 1px, transparent 32px);"></div>
+            <input type="range" class="rail" min="0" max="2880" step="30" value="{{scrubOff}}" onChange="{{setScrub}}" style="position:absolute; inset:0; width:100%; height:100%;">
+          </div>
+        </div>
+        <div onDragOver="{{youOver}}" onDrop="{{youDrop}}" style="border-radius:8px; padding:7px 11px; background:{{t.rowSel}}; margin:0 2px; border:1px dashed {{youHl}};">
+          <div style="display:flex; justify-content:space-between; margin-bottom:1px;">
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.1em; color:{{t.ter}};">YOUR TIME</span>
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.1em; color:{{youStateColor}};">{{youState}}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-size:14px; font-weight:600; color:{{t.text}};">{{youCity}}</span>
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-variant-numeric:tabular-nums; font-size:16px; font-weight:500; color:{{t.text}};">{{youTime}}</span>
+          </div>
+        </div>
+        <sc-for list="{{denRows}}" as="f" hint-placeholder-count="8">
+          <sc-if value="{{f.isHeader}}" hint-placeholder-val="{{ false }}">
+            <div onDragOver="{{f.over}}" onDrop="{{f.drop}}" style="display:flex; align-items:center; gap:6px; padding:5px 9px; margin:5px 2px 0; border:1px dashed {{f.hl}}; border-radius:7px; position:relative;">
+              <button onClick="{{f.toggle}}" style="display:flex; align-items:center; gap:6px; background:none; border:none; cursor:pointer; padding:0; flex:1; text-align:left;">
+                <span style="font-size:8px; color:{{t.ter}}; display:inline-block; transform:{{f.chev}};">&#9662;</span>
+                <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.14em; color:{{t.ter}};">{{f.name}}</span>
+                <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; color:{{t.ter}}; background:{{t.seg}}; border-radius:999px; padding:1px 7px;">{{f.count}}</span>
+              </button>
+              <button onClick="{{f.openMenu}}" title="Pack options" style="background:none; border:none; cursor:pointer; color:{{t.ter}}; font-size:13px; line-height:1; padding:0 2px;" style-hover="color:{{t.text}};">&#8943;</button>
+              <sc-if value="{{f.menuOpen}}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute; right:6px; top:26px; width:196px; background:{{t.menuBg}}; border:1px solid {{t.hairStrong}}; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.4); padding:4px; z-index:16; display:block;">
+                  <button onClick="{{f.closeMenu}}" style="width:100%; text-align:left; font-size:12px; color:{{t.text}}; background:none; border:none; border-radius:5px; padding:4px 9px; cursor:pointer;" style-hover="background:#0FACED; color:#04202E;">Rename</button>
+                  <button onClick="{{f.delKeep}}" style="width:100%; text-align:left; font-size:12px; color:{{t.text}}; background:none; border:none; border-radius:5px; padding:4px 9px; cursor:pointer;" style-hover="background:#0FACED; color:#04202E;">{{f.delKeepLabel}}</button>
+                  <button onClick="{{f.delAll}}" style="width:100%; text-align:left; font-size:12px; color:{{t.err}}; background:none; border:none; border-radius:5px; padding:4px 9px; cursor:pointer;" style-hover="background:#0FACED; color:#04202E;">{{f.delAllLabel}}</button>
+                </span>
+              </sc-if>
+            </div>
+          </sc-if>
+          <sc-if value="{{f.isRow}}" hint-placeholder-val="{{ true }}">
+            <div draggable="{{ true }}" onDragStart="{{f.dragStart}}" onDragOver="{{f.over}}" onDrop="{{f.drop}}" style="border-radius:8px; padding:7px 11px; margin:0 2px; opacity:{{f.dim}}; position:relative; cursor:grab; background:{{f.rowBg}};" style-hover="background:{{t.rowSel}};">
+              <div style="display:flex; justify-content:space-between; margin-bottom:1px;">
+                <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.1em; color:{{t.ter}};">{{f.offset}}</span>
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.1em; color:{{f.stateColor}};">{{f.state}}</span>
+                  <button onClick="{{f.openMenu}}" title="Edit, block or remove" style="background:none; border:none; cursor:pointer; color:{{t.ter}}; font-size:13px; line-height:1; padding:0 2px;" style-hover="color:{{t.text}};">&#8943;</button>
+                </span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="width:22px; height:22px; border-radius:50%; background:{{f.avBg}}; color:#0FACED; display:grid; place-items:center; font-size:11px; font-weight:700; flex-shrink:0;">{{f.avatar}}</span>
+                <span style="flex:1; font-size:14px; font-weight:600; color:{{t.text}};">{{f.name}}</span>
+                <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-variant-numeric:tabular-nums; font-size:16px; font-weight:500; color:{{t.text}};">{{f.time}}</span>
+              </div>
+              <sc-if value="{{f.menuOpen}}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute; right:8px; top:26px; width:110px; background:{{t.menuBg}}; border:1px solid {{t.hairStrong}}; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.4); padding:4px; z-index:15; display:block;">
+                  <button onClick="{{f.closeMenu}}" style="width:100%; text-align:left; font-size:12px; color:{{t.text}}; background:none; border:none; border-radius:5px; padding:4px 9px; cursor:pointer;" style-hover="background:#0FACED; color:#04202E;">Edit</button>
+                  <button onClick="{{f.block}}" style="width:100%; text-align:left; font-size:12px; color:{{t.text}}; background:none; border:none; border-radius:5px; padding:4px 9px; cursor:pointer;" style-hover="background:#0FACED; color:#04202E;">Block</button>
+                  <button onClick="{{f.remove}}" style="width:100%; text-align:left; font-size:12px; color:{{t.err}}; background:none; border:none; border-radius:5px; padding:4px 9px; cursor:pointer;" style-hover="background:#0FACED; color:#04202E;">Remove</button>
+                </span>
+              </sc-if>
+            </div>
+          </sc-if>
+        </sc-for>
+        <sc-if value="{{newPackOpen}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; gap:6px; margin:8px 2px 0;">
+            <input value="{{newPackName}}" onChange="{{setNewPackName}}" placeholder="{{packPlaceholder}}" style="flex:1; font-size:12px; color:{{t.text}}; background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:6px; padding:6px 9px; outline:none;">
+            <button onClick="{{createPack}}" style="font-size:11px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:6px; padding:5px 12px; cursor:pointer;">Create</button>
+            <button onClick="{{cancelNewPack}}" style="font-size:11px; font-weight:500; color:{{t.sub}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:5px 10px; cursor:pointer;">Cancel</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{newPackClosed}}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{openNewPack}}" style="margin:8px 2px 0; text-align:left; font-size:11px; font-weight:500; color:{{t.ter}}; background:none; border:1px dashed {{t.hairStrong}}; border-radius:7px; padding:6px 10px; cursor:pointer;" style-hover="color:{{t.text}};">{{newPackLabel}}</button>
+        </sc-if>
+        <div style="font-size:10px; color:{{t.ter}}; padding:7px 6px 0;">{{dragHint}}</div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{showMeetList}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; gap:6px; padding:2px 2px 8px;">
+          <button onClick="{{goCreate}}" style="flex:1; font-size:12px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:6px; padding:6px 0; cursor:pointer;" style-hover="background:#3BBDF1;">Create</button>
+          <button onClick="{{openJoin}}" style="flex:1; font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:6px 0; cursor:pointer;">Join with code</button>
+        </div>
+        <sc-for list="{{meetRows}}" as="m" hint-placeholder-count="2">
+          <div onClick="{{m.open}}" style="display:flex; align-items:center; gap:10px; border-radius:8px; padding:8px 10px; cursor:pointer; margin:0 2px;" style-hover="background:{{t.rowSel}};">
+            <span style="flex:1; min-width:0;">
+              <span style="display:block; font-size:13px; font-weight:600; color:{{t.text}};">{{m.title}}</span>
+              <span style="display:block; font-size:11px; color:{{t.sub}};">{{m.meta}}</span>
+            </span>
+            <span style="font-size:10px; font-weight:600; color:{{m.pillFg}}; background:{{m.pillBg}}; border-radius:999px; padding:3px 9px;">{{m.pill}}</span>
+            <span style="color:{{t.ter}}; font-size:14px;">&#8250;</span>
+          </div>
+        </sc-for>
+        <div style="font-size:11px; color:{{t.ter}}; padding:8px 6px;">{{meetListHint}}</div>
+      </sc-if>
+
+      <sc-if value="{{showCreate}}" hint-placeholder-val="{{ false }}">
+        <div style="padding:2px 2px 6px;"><button onClick="{{backToMeetList}}" style="background:none; border:none; cursor:pointer; color:#0FACED; font-size:13px; font-weight:500; padding:2px 6px 2px 2px;">&#8249; Meetups</button></div>
+        <div style="padding:0 4px 8px;">
+          <div style="font-size:15px; font-weight:700; color:{{t.text}};">New meetup</div>
+          <div style="font-size:11px; color:{{t.sub}}; margin-top:2px;">No title — the pack sees &ldquo;Nathanial&rsquo;s meetup.&rdquo; Pick 2&ndash;5 slots.</div>
+        </div>
+        <sc-for list="{{createRows}}" as="cs" hint-placeholder-count="2">
+          <div style="background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:8px; padding:9px 12px; margin:0 2px 6px; display:flex; align-items:center;">
+            <span style="flex:1; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-variant-numeric:tabular-nums; font-size:13px; color:{{t.text}};">{{cs.when}}</span>
+            <button onClick="{{cs.remove}}" style="background:none; border:none; cursor:pointer; color:{{t.ter}}; font-size:13px;">&#10005;</button>
+          </div>
+        </sc-for>
+        <div style="border:1px dashed {{t.hairStrong}}; border-radius:8px; padding:8px 12px; margin:0 2px 6px; display:flex; align-items:center; gap:8px;">
+          <input type="date" value="{{newSlotDate}}" onChange="{{setNewSlotDate}}" style="font-size:12px; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:5px; padding:4px 6px; outline:none; color-scheme:{{t.scheme}};">
+          <input type="time" value="{{newSlotTime}}" onChange="{{setNewSlotTime}}" style="font-size:12px; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:5px; padding:4px 6px; outline:none; color-scheme:{{t.scheme}};">
+          <span style="flex:1;"></span>
+          <button onClick="{{addSlot}}" style="background:none; border:none; cursor:pointer; font-size:12px; font-weight:600; color:#0FACED;">+ Add slot</button>
+        </div>
+        <div style="font-size:10px; color:{{t.ter}}; padding:0 6px 8px;">{{slotCount}} of 5 slots</div>
+        <button onClick="{{confirmCreate}}" style="margin:0 2px; font-size:13px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:7px; padding:8px 0; cursor:pointer;" style-hover="background:#3BBDF1;">Create &middot; get share code</button>
+      </sc-if>
+
+      <sc-if value="{{showShare}}" hint-placeholder-val="{{ false }}">
+        <div style="padding:2px 2px 6px;"><button onClick="{{backToMeetList}}" style="background:none; border:none; cursor:pointer; color:#0FACED; font-size:13px; font-weight:500; padding:2px 6px 2px 2px;">&#8249; Meetups</button></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:9px; padding:16px 20px 6px; text-align:center;">
+          <div style="font-size:15px; font-weight:700; color:{{t.text}};">Your meetup is live</div>
+          <button onClick="{{copyLink}}" style="width:100%; font-size:13px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:7px; padding:9px 0; cursor:pointer;" style-hover="background:#3BBDF1;">{{copyLinkLabel}}</button>
+          <div style="font-size:12px; color:{{t.sub}}; line-height:1.5; max-width:280px;">{{shareHint}}</div>
+          <div style="width:100%; display:flex; align-items:center; gap:8px; margin-top:2px;">
+            <span style="flex:1; height:1px; background:{{t.hair}};"></span>
+            <span style="font-size:10px; color:{{t.ter}};">or read it aloud</span>
+            <span style="flex:1; height:1px; background:{{t.hair}};"></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:17px; font-weight:600; letter-spacing:0.08em; color:#0FACED;">HOWL&middot;3F8Q-1M7Z</span>
+            <button onClick="{{copyMeetCode}}" style="font-size:11px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:5px; padding:3px 9px; cursor:pointer;">{{copyMeetLabel}}</button>
+          </div>
+        </div>
+        <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.12em; color:{{t.ter}}; padding:10px 6px 6px;">YOUR SLOTS — YOUR LOCAL TIME</div>
+        <sc-for list="{{shareRows}}" as="ss" hint-placeholder-count="3">
+          <div style="background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:8px; padding:9px 12px; margin:0 2px 5px; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-variant-numeric:tabular-nums; font-size:13px; color:{{t.text}};">{{ss.when}}</div>
+        </sc-for>
+      </sc-if>
+
+      <sc-if value="{{showDetail}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:2px 2px 6px;">
+          <button onClick="{{backToMeetList}}" style="background:none; border:none; cursor:pointer; color:#0FACED; font-size:13px; font-weight:500; padding:2px 6px 2px 2px;">&#8249; Meetups</button>
+          <sc-if value="{{detIsMine}}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.04em; color:{{t.ter}}; background:{{t.seg}}; border-radius:999px; padding:3px 10px;">HOWL&middot;3F8Q-1M7Z</span>
+          </sc-if>
+        </div>
+        <div style="padding:0 4px 8px;">
+          <div style="font-size:15px; font-weight:700; color:{{t.text}};">{{detTitle}}</div>
+          <div style="font-size:11px; color:{{t.sub}}; margin-top:2px;">{{detMeta}}</div>
+        </div>
+        <sc-for list="{{detSlots}}" as="s" hint-placeholder-count="3">
+          <div style="background:{{s.bg}}; border:1px solid {{s.border}}; border-radius:9px; padding:10px 12px; margin:0 2px 6px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="flex:1; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-variant-numeric:tabular-nums; font-size:13px; font-weight:600; color:{{t.text}};">{{s.when}}</span>
+              <sc-if value="{{s.isBest}}" hint-placeholder-val="{{ false }}">
+                <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.1em; font-weight:600; color:#0FACED;">BEST SLOT</span>
+              </sc-if>
+              <sc-if value="{{s.canVote}}" hint-placeholder-val="{{ false }}">
+                <span style="display:flex; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; overflow:hidden;">
+                  <button onClick="{{s.yes}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 10px; color:{{s.yesFg}}; background:{{s.yesBg}};">Yes</button>
+                  <button onClick="{{s.no}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 10px; color:{{s.noFg}}; background:{{s.noBg}}; border-left:1px solid {{t.hair}}; border-right:1px solid {{t.hair}};">No</button>
+                  <button onClick="{{s.maybe}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 10px; color:{{s.maybeFg}}; background:{{s.maybeBg}};">Maybe</button>
+                </span>
+              </sc-if>
+            </div>
+            <div style="display:flex; height:5px; border-radius:3px; overflow:hidden; margin:8px 0 5px;">
+              <span style="width:{{s.wYes}}; background:#30D158;"></span><span style="width:{{s.wMaybe}}; background:#FF9F0A;"></span><span style="width:{{s.wNo}}; background:{{t.hairStrong}};"></span>
+            </div>
+            <span style="font-size:10px; color:{{t.sub}};">{{s.tally}}</span>
+            <sc-if value="{{s.isMine}}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{s.toggleNames}}" style="display:block; font-size:10px; font-weight:600; color:#0FACED; background:none; border:none; cursor:pointer; padding:6px 0 0; text-align:left;">{{s.expandLabel}}</button>
+              <sc-if value="{{s.expanded}}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; flex-direction:column; gap:4px; padding-top:6px; border-top:1px solid {{t.hair}}; margin-top:6px;">
+                  <sc-for list="{{s.voters}}" as="v" hint-placeholder-count="4">
+                    <div style="display:flex; align-items:center; gap:7px;">
+                      <span style="width:6px; height:6px; border-radius:50%; background:{{v.dot}}; flex-shrink:0;"></span>
+                      <span style="flex:1; font-size:11px; font-weight:500; color:{{t.text}};">{{v.name}}</span>
+                      <span style="font-size:10px; color:{{t.ter}};">{{v.vote}}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{detIsMine}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; gap:6px; padding:6px 2px 2px;">
+            <button onClick="{{noop}}" style="font-size:11px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:5px 10px; cursor:pointer;">Rotate code</button>
+            <button onClick="{{noop}}" style="font-size:11px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:5px 10px; cursor:pointer;">Disable code</button>
+            <span style="flex:1;"></span>
+            <button onClick="{{noop}}" style="font-size:11px; font-weight:500; color:{{t.err}}; background:{{t.errBg}}; border:none; border-radius:6px; padding:5px 10px; cursor:pointer;">Delete</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{detIsTheirs}}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.12em; color:{{t.ter}}; padding:8px 6px 4px;">{{whosInLabel}}</div>
+          <sc-for list="{{detPeople}}" as="p" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:8px; border-radius:7px; padding:5px 10px; margin:0 2px; position:relative;" style-hover="background:{{t.rowSel}};">
+              <span style="flex:1; font-size:12px; font-weight:500; color:{{t.text}};">{{p.name}} <span style="color:{{t.ter}}; font-weight:400;">{{p.role}}</span></span>
+              <sc-if value="{{p.canBlock}}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{p.block}}" title="Block" style="background:none; border:none; cursor:pointer; color:{{t.ter}}; font-size:13px; line-height:1; padding:0 2px;" style-hover="color:{{t.err}};">&#8943;</button>
+              </sc-if>
+            </div>
+          </sc-for>
+          <div style="font-size:11px; color:{{t.ter}}; padding:6px 6px;">Slots shown in your local time, with the day — no wrong-day surprises. &#8943; blocks a person (find them in Settings &rsaquo; Blocked).</div>
+        </sc-if>
+      </sc-if>
+
+    </div>
+
+    <div style="height:36px; display:flex; align-items:center; gap:4px; padding:0 10px; border-top:1px solid {{t.hair}}; flex-shrink:0;">
+      <button onClick="{{openAdd}}" title="Add someone" style="width:28px; height:28px; display:grid; place-items:center; background:none; border:none; cursor:pointer; color:{{t.sub}}; font-size:16px; border-radius:6px;" style-hover="background:{{t.rowSel}}; color:{{t.text}};">+</button>
+      <button onClick="{{openSettings}}" title="Settings" style="width:28px; height:28px; display:grid; place-items:center; background:none; border:none; cursor:pointer; color:{{t.sub}}; font-size:13px; border-radius:6px;" style-hover="background:{{t.rowSel}}; color:{{t.text}};">&#9881;&#xFE0E;</button>
+      <span style="display:flex; align-items:center; gap:5px; padding-left:6px;">
+        <span style="width:6px; height:6px; border-radius:50%; background:{{syncDot}};"></span>
+        <span style="font-size:10px; color:{{syncFg}};">{{syncLabel}}</span>
+        <sc-if value="{{syncFailed}}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{noop}}" style="font-size:10px; font-weight:600; color:#0FACED; background:none; border:none; cursor:pointer; padding:0 2px;">Retry</button>
+        </sc-if>
+      </span>
+      <span style="flex:1;"></span>
+      <button onClick="{{copyCode}}" title="Copy your friend code" style="background:none; border:none; cursor:pointer; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; letter-spacing:0.05em; color:{{codeColor}}; padding:3px 8px; border-radius:999px; background:{{t.seg}};">{{codeLabel}}</button>
+    </div>
+
+    <sc-if value="{{blockToastOpen}}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; left:12px; right:12px; bottom:44px; background:{{t.sheet}}; border:1px solid {{t.hairStrong}}; border-radius:9px; box-shadow:0 8px 24px rgba(0,0,0,0.35); padding:9px 12px; display:flex; align-items:center; gap:8px; z-index:18;" data-screen-label="Block toast">
+        <span style="flex:1; font-size:11px; color:{{t.text}}; line-height:1.4;">{{blockToastMsg}}</span>
+        <sc-if value="{{blockToastCanRotate}}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{toastRotate}}" style="font-size:11px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:5px; padding:4px 10px; cursor:pointer; white-space:nowrap;">Rotate code</button>
+        </sc-if>
+        <button onClick="{{toastDismiss}}" style="background:none; border:none; cursor:pointer; color:{{t.ter}}; font-size:11px; padding:0 2px;">&#10005;</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{addOpen}}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{closeSheet}}" style="position:absolute; inset:0; background:rgba(0,0,0,0.45); z-index:20;"></div>
+      <div style="position:absolute; left:20px; right:20px; top:32px; background:{{t.sheet}}; border:1px solid {{t.hairStrong}}; border-radius:11px; box-shadow:{{t.shadow}}; z-index:21; padding:16px; display:flex; flex-direction:column; gap:12px;" data-screen-label="Add someone sheet">
+        <div style="font-size:14px; font-weight:700; color:{{t.text}};">Add someone</div>
+        <div style="display:flex; background:{{t.well}}; border-radius:7px; padding:2px;">
+          <button onClick="{{addTabCode}}" style="flex:1; font-size:11px; font-weight:{{wAddCode}}; color:{{cAddCode}}; background:{{bAddCode}}; border:none; border-radius:5px; padding:4px 0; cursor:pointer;">{{codeTabLabel}}</button>
+          <button onClick="{{addTabManual}}" style="flex:1; font-size:11px; font-weight:{{wAddMan}}; color:{{cAddMan}}; background:{{bAddMan}}; border:none; border-radius:5px; padding:4px 0; cursor:pointer;">Manually</button>
+        </div>
+        <sc-if value="{{addIsCode}}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:11px; color:{{t.sub}};">Paste their code</label>
+            <input value="{{code}}" onChange="{{setCode}}" placeholder="DEN&middot;XXXX-XXXX" spellCheck="{{ false }}" style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:14px; letter-spacing:0.06em; color:{{t.text}}; background:{{t.well}}; border:1px solid {{codeBorder}}; border-radius:6px; padding:9px 10px; outline:none;">
+            <sc-if value="{{codeErr}}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:11px; color:{{t.err}};">That code doesn&rsquo;t look right &mdash; it should read DEN&middot;XXXX-XXXX.</span>
+            </sc-if>
+            <span style="font-size:10px; color:{{t.ter}};">Codes are one-way — they&rsquo;ll only see you if you share yours back.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{addIsManual}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:11px; color:{{t.sub}};">Name</label>
+            <input value="{{manName}}" onChange="{{setManName}}" placeholder="Vex" style="font-size:13px; color:{{t.text}}; background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:6px; padding:8px 10px; outline:none;">
+            <label style="font-size:11px; color:{{t.sub}}; margin-top:2px;">Timezone</label>
+            <span style="position:relative; display:block;">
+              <button onClick="{{toggleTz}}" style="width:100%; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:{{t.text}}; background:{{t.well}}; border:1px solid {{t.hair}}; border-radius:6px; padding:6px 6px 6px 10px; cursor:pointer; box-sizing:border-box;">
+                <span>{{manTzLabel}}</span>
+                <span style="display:grid; place-items:center; width:16px; height:16px; border-radius:4px; background:#0FACED; color:#04202E; font-size:8px; line-height:1;">&#9662;</span>
+              </button>
+              <sc-if value="{{tzOpen}}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute; left:0; right:0; top:calc(100% + 4px); background:{{t.sheet}}; border:1px solid {{t.hairStrong}}; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,0.4); padding:4px; z-index:30; display:block;">
+                  <sc-for list="{{tzRows}}" as="z" hint-placeholder-count="5">
+                    <button onClick="{{z.pick}}" style="width:100%; display:flex; align-items:center; gap:6px; font-size:12px; color:{{t.text}}; background:none; border:none; border-radius:5px; padding:5px 8px; cursor:pointer; text-align:left;" style-hover="background:#0FACED; color:#04202E;">
+                      <span style="width:12px; font-size:10px;">{{z.check}}</span>
+                      <span>{{z.label}}</span>
+                    </button>
+                  </sc-for>
+                </span>
+              </sc-if>
+            </span>
+            <span style="font-size:10px; color:{{t.ter}};">For pack members who don&rsquo;t use DenTime. You keep their clock; they never get a code.</span>
+          </div>
+        </sc-if>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button onClick="{{closeSheet}}" style="font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:6px 14px; cursor:pointer;">Cancel</button>
+          <button onClick="{{addPerson}}" style="font-size:12px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:6px; padding:6px 14px; cursor:pointer;" style-hover="background:#3BBDF1;">Add</button>
+        </div>
+        <div style="border-top:1px solid {{t.hair}}; padding-top:11px; display:flex; align-items:center; gap:8px;">
+          <span style="font-size:11px; color:{{t.sub}}; flex:1;">Your code</span>
+          <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px; letter-spacing:0.05em; color:#0FACED;">{{codeDisplay}}</span>
+          <button onClick="{{copyCode}}" style="font-size:11px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:5px; padding:3px 9px; cursor:pointer;">{{copyBtn}}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{joinOpen}}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{closeSheet}}" style="position:absolute; inset:0; background:rgba(0,0,0,0.45); z-index:20;"></div>
+      <div style="position:absolute; left:20px; right:20px; top:56px; background:{{t.sheet}}; border:1px solid {{t.hairStrong}}; border-radius:11px; box-shadow:{{t.shadow}}; z-index:21; padding:16px; display:flex; flex-direction:column; gap:12px;" data-screen-label="Join with code sheet">
+        <div style="font-size:14px; font-weight:700; color:{{t.text}};">{{joinTitle}}</div>
+        <input value="{{joinCode}}" onChange="{{setJoinCode}}" placeholder="HOWL&middot;XXXX-XXXX" spellCheck="{{ false }}" style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:14px; letter-spacing:0.06em; color:{{t.text}}; background:{{t.well}}; border:1px solid {{joinBorder}}; border-radius:6px; padding:9px 10px; outline:none;">
+        <sc-if value="{{joinPreview}}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(15,172,237,0.08); border:1px solid rgba(15,172,237,0.35); border-radius:8px; padding:10px 12px;">
+            <div style="font-size:12px; font-weight:600; color:{{t.text}};">Sable&rsquo;s meetup</div>
+            <div style="font-size:11px; color:{{t.sub}}; margin-top:2px;">3 slots &middot; Aug 21&ndash;23 &middot; 4 already in</div>
+          </div>
+        </sc-if>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button onClick="{{closeSheet}}" style="font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:6px 14px; cursor:pointer;">Cancel</button>
+          <button onClick="{{joinMeetup}}" style="font-size:12px; font-weight:600; color:#04202E; background:#0FACED; border:none; border-radius:6px; padding:6px 14px; cursor:pointer;" style-hover="background:#3BBDF1;">Join meetup</button>
+        </div>
+      </div>
+    </sc-if>
+
+
+  </div>
+  </sc-if>
+
+  <sc-if value="{{settingsOpen}}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute; left:90px; top:110px; width:520px; border-radius:11px; background:{{t.win}}; border:1px solid {{t.hair}}; box-shadow:{{t.shadow}}; z-index:8; overflow:hidden;" data-screen-label="Settings window">
+    <div style="background:{{t.winBar}}; border-bottom:1px solid {{t.hair}}; display:flex; flex-direction:column; gap:7px; padding:9px 12px 8px;">
+      <div style="display:flex; align-items:center; position:relative; height:14px;">
+        <span style="display:flex; gap:7px; z-index:1;">
+          <button onClick="{{closeSettings}}" title="Close" style="width:12px; height:12px; border-radius:50%; background:#FF5F57; border:1px solid rgba(0,0,0,0.15); cursor:pointer; padding:0;"></button>
+          <span style="width:12px; height:12px; border-radius:50%; background:#FEBC2E; border:1px solid rgba(0,0,0,0.15);"></span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#28C840; border:1px solid rgba(0,0,0,0.15);"></span>
+        </span>
+        <span style="position:absolute; left:0; right:0; text-align:center; font-size:13px; font-weight:600; color:{{t.text}}; pointer-events:none;">{{settingsTitle}}</span>
+      </div>
+      <div style="display:flex; justify-content:center; gap:2px;">
+        <button onClick="{{setGeneral}}" style="font-size:10px; font-weight:600; color:{{cGeneral}}; background:{{bGeneral}}; border:none; border-radius:6px; padding:4px 12px; cursor:pointer;">General</button>
+        <button onClick="{{setAccount}}" style="font-size:10px; font-weight:600; color:{{cAccount}}; background:{{bAccount}}; border:none; border-radius:6px; padding:4px 12px; cursor:pointer;">Account</button>
+        <button onClick="{{setBlocked}}" style="font-size:10px; font-weight:600; color:{{cBlocked}}; background:{{bBlocked}}; border:none; border-radius:6px; padding:4px 12px; cursor:pointer;">Blocked</button>
+        <button onClick="{{setAbout}}" style="font-size:10px; font-weight:600; color:{{cAbout}}; background:{{bAbout}}; border:none; border-radius:6px; padding:4px 12px; cursor:pointer;">About</button>
+      </div>
+    </div>
+    <div style="padding:16px 18px 20px; display:flex; flex-direction:column; gap:10px; min-height:240px;">
+
+      <sc-if value="{{showGeneral}}" hint-placeholder-val="{{ true }}">
+        <div style="border-radius:9px; background:{{t.well}}; border:1px solid {{t.hair}}; overflow:hidden;">
+          <div style="display:flex; align-items:center; padding:10px 14px; border-bottom:1px solid {{t.hair}};">
+            <span style="flex:1; font-size:13px; color:{{t.text}};">Launch at login</span>
+            <button onClick="{{toggleLogin}}" style="display:inline-flex; width:38px; height:22px; border-radius:11px; background:{{loginBg}}; padding:2px; box-sizing:border-box; justify-content:{{loginJust}}; border:none; cursor:pointer;"><span style="width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.3);"></span></button>
+          </div>
+          <div style="display:flex; align-items:center; padding:10px 14px; border-bottom:1px solid {{t.hair}};">
+            <span style="flex:1; font-size:13px; color:{{t.text}};">Time format</span>
+            <span style="display:flex; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; overflow:hidden;">
+              <button onClick="{{set12h}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 12px; color:{{c12}}; background:{{b12}};">12-hour</button>
+              <button onClick="{{set24h}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 12px; color:{{c24}}; background:{{b24}}; border-left:1px solid {{t.hair}};">24-hour</button>
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; padding:10px 14px; border-bottom:1px solid {{t.hair}};">
+            <span style="flex:1; font-size:13px; color:{{t.text}};">Menu bar icon</span>
+            <span style="display:flex; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; overflow:hidden;">
+              <button onClick="{{setIconPaw}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 12px; color:{{cIp}}; background:{{bIp}};">Paw</button>
+              <button onClick="{{setIconTime}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 12px; color:{{cIt}}; background:{{bIt}}; border-left:1px solid {{t.hair}};">Paw + clock</button>
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; padding:10px 14px; border-bottom:1px solid {{t.hair}};">
+            <span style="flex:1;">
+              <span style="display:block; font-size:13px; color:{{t.text}};">Vocabulary</span>
+              <span style="display:block; font-size:11px; color:{{t.ter}};">{{vocPreview}}</span>
+            </span>
+            <span style="display:flex; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; overflow:hidden;">
+              <button onClick="{{vocDen}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 12px; color:{{cVocDen}}; background:{{bVocDen}};">Den</button>
+              <button onClick="{{vocTeam}}" style="font-size:11px; font-weight:600; border:none; cursor:pointer; padding:4px 12px; color:{{cVocTeam}}; background:{{bVocTeam}}; border-left:1px solid {{t.hair}};">Team</button>
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; padding:10px 14px; border-bottom:1px solid {{t.hair}};">
+            <span style="flex:1;">
+              <span style="display:block; font-size:13px; color:{{t.text}};">Quiet hours</span>
+              <span style="display:block; font-size:11px; color:{{t.ter}};">Drives the asleep dim + &#9790; across the den</span>
+            </span>
+            <span style="display:flex; align-items:center; gap:6px;">
+              <input type="time" value="{{sleepStart}}" onChange="{{setSleepStart}}" style="font-size:12px; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:4px 6px; outline:none; color-scheme:{{t.scheme}};">
+              <span style="font-size:11px; color:{{t.ter}};">to</span>
+              <input type="time" value="{{sleepEnd}}" onChange="{{setSleepEnd}}" style="font-size:12px; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:4px 6px; outline:none; color-scheme:{{t.scheme}};">
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; padding:10px 14px;">
+            <span style="flex:1;">
+              <span style="display:block; font-size:13px; color:{{t.text}};">Streamer mode</span>
+              <span style="display:block; font-size:11px; color:{{t.ter}};">Hides your friend code and account name</span>
+            </span>
+            <button onClick="{{toggleStreamer}}" style="display:inline-flex; width:38px; height:22px; border-radius:11px; background:{{streamerBg}}; padding:2px; box-sizing:border-box; justify-content:{{streamerJust}}; border:none; cursor:pointer;"><span style="width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.3);"></span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showAccount}}" hint-placeholder-val="{{ false }}">
+        <div style="border-radius:9px; background:{{t.well}}; border:1px solid {{t.hair}}; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid {{t.hair}};">
+            <span style="width:36px; height:36px; border-radius:50%; background:{{t.seg}}; color:#0FACED; display:grid; place-items:center; font-size:14px; font-weight:700;">N</span>
+            <span style="flex:1;">
+              <span style="display:block; font-size:13px; font-weight:600; color:{{t.text}};">{{acctName}}</span>
+              <span style="display:block; font-size:11px; color:{{t.sub}};">Signed in with Apple</span>
+            </span>
+            <button onClick="{{openSignout}}" style="font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:5px 12px; cursor:pointer;">Sign out&hellip;</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; padding:12px 14px;">
+            <span style="flex:1;">
+              <span style="display:block; font-size:11px; color:{{t.sub}};">Your friend code</span>
+              <span style="display:block; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:18px; font-weight:600; letter-spacing:0.08em; color:#0FACED; margin-top:2px;">{{codeDisplay}}</span>
+            </span>
+            <button onClick="{{copyCode}}" style="font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:5px 12px; cursor:pointer;" style-hover="background:{{t.rowSel}};">{{copyBtn}}</button>
+            <button onClick="{{openRotate}}" style="font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:5px 12px; cursor:pointer;">Rotate code&hellip;</button>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; padding:0 2px;">
+          <button onClick="{{openDelete}}" style="font-size:12px; font-weight:500; color:{{t.err}}; background:{{t.errBg}}; border:1px solid {{t.errBorder}}; border-radius:6px; padding:5px 12px; cursor:pointer;">Delete account&hellip;</button>
+          <span style="font-size:11px; color:{{t.ter}};">Asks twice. Removes you from every den and meetup.</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showBlocked}}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{hasBlocked}}" hint-placeholder-val="{{ true }}">
+          <div style="border-radius:9px; background:{{t.well}}; border:1px solid {{t.hair}}; overflow:hidden;">
+            <sc-for list="{{blockedRows}}" as="b" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid {{t.hair}};">
+                <span style="flex:1; font-size:13px; color:{{t.text}};">{{b.name}}</span>
+                <span style="font-size:11px; color:{{t.ter}};">{{b.since}}</span>
+                <button onClick="{{b.unblock}}" style="font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:4px 12px; cursor:pointer;">Unblock</button>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:11px; color:{{t.ter}}; padding:0 4px;">You won&rsquo;t see them &mdash; they&rsquo;re hidden from your den and meetups. To stop them resolving your code, rotate it in Account.</div>
+        </sc-if>
+        <sc-if value="{{noBlocked}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; justify-content:center; padding:60px 0; font-size:12px; color:{{t.ter}};">No one is blocked.</div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{showAbout}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:22px 0 10px;">
+          <span style="width:56px; height:56px; border-radius:14px; background:#091533; display:grid; place-items:center;">
+            <span style="position:relative; width:30px; height:29px; display:inline-block;">
+              <span style="position:absolute; left:7px; top:11px; width:16px; height:14px; border-radius:50% 50% 46% 46%; background:#0FACED;"></span>
+              <span style="position:absolute; left:1px; top:3px; width:7px; height:7px; border-radius:50%; background:#0FACED;"></span>
+              <span style="position:absolute; left:11.5px; top:0; width:7px; height:7px; border-radius:50%; background:#0FACED;"></span>
+              <span style="position:absolute; left:22px; top:3px; width:7px; height:7px; border-radius:50%; background:#0FACED;"></span>
+              <span style="position:absolute; left:14.4px; top:13px; width:1.8px; height:6px; background:#091533; border-radius:1px;"></span>
+              <span style="position:absolute; left:15px; top:17.2px; width:5px; height:1.8px; background:#091533; border-radius:1px;"></span>
+            </span>
+          </span>
+          <div style="font-size:16px; font-weight:700; color:{{t.text}};">DenTime</div>
+          <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:11px; color:{{t.sub}};">Version 2.0 (2026.8)</div>
+          <div style="display:flex; gap:14px; font-size:12px;"><a href="#">Docs</a><a href="#">Support</a></div>
+          <div style="font-size:11px; color:{{t.ter}};">&copy; 2026 MrDemonWolf, Inc. &middot; Find your pack&rsquo;s time.</div>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <sc-if value="{{alertOpen}}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; background:rgba(0,0,0,0.32); z-index:5;"></div>
+      <div style="position:absolute; left:50%; top:20px; transform:translateX(-50%); width:250px; background:{{t.sheet}}; border:1px solid {{t.hairStrong}}; border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.45); padding:18px 16px 14px; z-index:6; display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center;" data-screen-label="Confirmation alert">
+        <span style="width:40px; height:40px; border-radius:10px; background:#091533; display:grid; place-items:center;">
+          <span style="position:relative; width:22px; height:21px; display:inline-block;">
+            <span style="position:absolute; left:5.5px; top:8px; width:11px; height:9.5px; border-radius:50% 50% 46% 46%; background:#0FACED;"></span>
+            <span style="position:absolute; left:1px; top:2px; width:5px; height:5px; border-radius:50%; background:#0FACED;"></span>
+            <span style="position:absolute; left:8.5px; top:0; width:5px; height:5px; border-radius:50%; background:#0FACED;"></span>
+            <span style="position:absolute; left:16px; top:2px; width:5px; height:5px; border-radius:50%; background:#0FACED;"></span>
+          </span>
+        </span>
+        <div style="font-size:13px; font-weight:700; color:{{t.text}};">{{alertTitle}}</div>
+        <div style="font-size:11px; color:{{t.sub}}; line-height:1.45;">{{alertMsg}}</div>
+        <sc-if value="{{alertNeedsType}}" hint-placeholder-val="{{ false }}">
+          <input value="{{alertTyped}}" onChange="{{setAlertTyped}}" placeholder="Type DELETE" spellCheck="{{ false }}" style="width:100%; box-sizing:border-box; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; text-align:center; color:{{t.text}}; background:{{t.well}}; border:1px solid {{t.hairStrong}}; border-radius:6px; padding:7px 8px; outline:none; margin-top:2px;">
+        </sc-if>
+        <button onClick="{{alertConfirm}}" style="width:100%; font-size:12px; font-weight:600; color:{{alertBtnFg}}; background:{{alertBtnBg}}; border:none; border-radius:6px; padding:6px 0; cursor:pointer; margin-top:4px;">{{alertAction}}</button>
+        <button onClick="{{closeAlert}}" style="width:100%; font-size:12px; font-weight:500; color:{{t.text}}; background:{{t.seg}}; border:1px solid {{t.hair}}; border-radius:6px; padding:6px 0; cursor:pointer;">Cancel</button>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <div style="position:absolute; left:16px; bottom:12px; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; color:{{t.ter}}; letter-spacing:0.04em; line-height:1.8; z-index:2;">
+    DENTIME V2 &mdash; INTERACTIVE &middot; paw toggles panel &middot; {{modeGlyph}}&#xFE0E; toggles appearance<br>
+    <a href="DenTime Design System.dc.html" style="color:{{t.ter}}; text-decoration:underline;">design system</a> &middot; <a href="DenTime App.dc.html" style="color:{{t.ter}}; text-decoration:underline;">v1</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;den&quot;,&quot;options&quot;:[&quot;den&quot;,&quot;meetups&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Mockup&quot;},&quot;emptyDen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Mockup&quot;},&quot;cloudState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;ok&quot;,&quot;options&quot;:[&quot;ok&quot;,&quot;offline&quot;,&quot;signed-out&quot;,&quot;drive-off&quot;,&quot;restricted&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;CloudKit&quot;},&quot;syncState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;synced&quot;,&quot;options&quot;:[&quot;synced&quot;,&quot;syncing&quot;,&quot;failed&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;CloudKit&quot;}}">
+class Component extends DCLogic {
+  state = {
+    tab: null, dark: true, panelOpen: true, now: new Date(),
+    scrubOff: 0, packOpen: { movie: true, dnd: true },
+    sheet: null, addTab: 'code', code: '', codeErr: false, manName: '', manTz: 'America/Chicago',
+    joinCode: '', joined: false, copied: false, copiedMeet: false,
+    vocab: 'den', tzOpen: false, alert: null, codeReal: 'DEN\u00B77K4M-2P9X',
+    meetView: 'list', meetSel: null, votes: {},
+    createSlots: ['2026-08-08T21:00', '2026-08-09T20:00'], newSlotDate: '2026-08-10', newSlotTime: '19:30',
+    settingsOpen: false, settingsTab: 'general', use24h: false,
+    launchLogin: true, iconStyle: 'paw', sleepStart: '23:00', sleepEnd: '07:00', streamer: false,
+    blocked: [{ name: 'Grif', since: 'Jun 2026' }],
+    removed: [], rowMenu: null, expandedSlot: null,
+    exGone: [], blockToast: null, copiedLink: false, alertTyped: '',
+    packs: [{ id: 'movie', label: 'MOVIE PACK' }, { id: 'dnd', label: 'D&D CREW' }],
+    assign: {}, dragOver: null, packMenu: null, newPackOpen: false, newPackName: '',
+    extraFriends: []
+  };
+  componentDidMount() { this._iv = setInterval(() => this.setState({ now: new Date() }), 1000); }
+  componentWillUnmount() { clearInterval(this._iv); }
+  fmt(d, tz, use24) {
+    try { return new Intl.DateTimeFormat(use24 ? 'en-GB' : 'en-US', { hour: '2-digit', minute: '2-digit', hour12: !use24, timeZone: tz }).format(d).replace(/^24/, '00'); } catch (e) { return '--:--'; }
+  }
+  hourIn(d, tz) { return parseInt(new Intl.DateTimeFormat('en-GB', { hour: '2-digit', hour12: false, timeZone: tz }).format(d), 10) % 24; }
+  ymd(d, tz) { return new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: tz }).format(d); }
+  wday(d, tz) { return new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: tz }).format(d); }
+  offsetH(d, tz) {
+    const loc = new Date(d.toLocaleString('en-US', { timeZone: tz }));
+    const here = new Date(d.toLocaleString('en-US'));
+    return Math.round((loc - here) / 1800000) / 2;
+  }
+  status(h) {
+    const p = (x, dft) => { const n = parseInt((x || dft).split(':')[0], 10); return isNaN(n) ? parseInt(dft, 10) : n; };
+    const ss = p(this.state.sleepStart, '23:00'), se = p(this.state.sleepEnd, '07:00');
+    const asleep = ss > se ? (h >= ss || h < se) : (h >= ss && h < se);
+    if (asleep) return { label: 'NIGHT \u263E', color: null, dim: 0.5, night: true };
+    const until = (ss - h + 24) % 24;
+    if (until > 0 && until <= 2) return { label: 'ALMOST DONE', color: '#FF9F0A', dim: 1, night: false };
+    return { label: 'WORKING DAY \u25CF', color: '#30D158', dim: 1, night: false };
+  }
+  renderVals() {
+    const s = this.state, dark = s.dark;
+    const t = dark ? {
+      desk: '#0E0F11', menub: 'rgba(20,21,24,0.9)', panel: 'rgba(25,26,29,0.96)', sheet: '#242629',
+      hair: 'rgba(255,255,255,0.08)', hairStrong: 'rgba(255,255,255,0.16)', text: '#F2F3F5', sub: '#9BA1AB', ter: '#8A8F98',
+      rowSel: 'rgba(255,255,255,0.06)', well: 'rgba(0,0,0,0.28)', seg: '#2A2D31', menuBg: '#2E3136',
+      win: '#202225', winBar: '#26282C', err: '#FF6B61', errBg: 'rgba(255,69,58,0.12)', errBorder: 'rgba(255,69,58,0.25)',
+      tick: 'rgba(255,255,255,0.22)', scheme: 'dark', shadow: '0 18px 50px rgba(0,0,0,0.55)'
+    } : {
+      desk: '#DEE1E8', menub: 'rgba(250,250,252,0.85)', panel: 'rgba(246,246,248,0.97)', sheet: '#FDFDFE',
+      hair: 'rgba(0,0,0,0.10)', hairStrong: 'rgba(0,0,0,0.18)', text: '#1B1D22', sub: '#666C7C', ter: '#6E7480',
+      rowSel: 'rgba(0,0,0,0.05)', well: 'rgba(0,0,0,0.045)', seg: '#FFFFFF', menuBg: '#FFFFFF',
+      win: '#F4F5F7', winBar: '#EBECEF', err: '#D70015', errBg: 'rgba(215,0,21,0.08)', errBorder: 'rgba(215,0,21,0.25)',
+      tick: 'rgba(0,0,0,0.22)', scheme: 'light', shadow: '0 18px 50px rgba(0,0,0,0.3)'
+    };
+    const use24 = s.use24h;
+    const tab = s.tab || (this.props.startTab || 'den');
+    const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const target = new Date(Math.floor(s.now.getTime() / 1800000) * 1800000 + s.scrubOff * 60000);
+    const live = s.scrubOff === 0;
+    const shown = live ? s.now : target;
+
+    const people = [
+      { name: 'Kira', tz: 'Europe/Berlin', abbr: 'CET', pack: null, em: '\u{1F43A}' },
+      { name: 'Rook', tz: 'America/Los_Angeles', abbr: 'PT', pack: null },
+      { name: 'Moss', tz: 'Asia/Tokyo', abbr: 'JST', pack: 'movie', em: '\u{1F98A}' },
+      { name: 'Ash', tz: 'Australia/Sydney', abbr: 'AET', pack: 'movie' },
+      { name: 'Fen', tz: 'America/Sao_Paulo', abbr: 'BRT', pack: 'movie' },
+      { name: 'Juno', tz: 'Europe/London', abbr: 'BST', pack: 'movie' },
+      { name: 'Vex', tz: 'America/Chicago', abbr: 'CT', pack: 'dnd' },
+      { name: 'Sable', tz: 'America/New_York', abbr: 'ET', pack: 'dnd' },
+      { name: 'Orin', tz: 'Europe/Berlin', abbr: 'CET', pack: 'dnd' }
+    ].concat(s.extraFriends);
+
+    const team = s.vocab === 'team';
+    const meetNoun = team ? 'meeting' : 'meetup';
+    const gone = s.removed.concat(s.blocked.map(b => b.name));
+    const effPack = (f) => Object.prototype.hasOwnProperty.call(s.assign, f.name) ? s.assign[f.name] : f.pack;
+    const assignTo = (packId) => (e) => {
+      e.preventDefault();
+      const nm = s._drag || e.dataTransfer.getData('text/plain');
+      if (nm) this.setState({ assign: { ...s.assign, [nm]: packId }, dragOver: null, _drag: null });
+    };
+    const allowOver = (key) => (e) => { e.preventDefault(); if (s.dragOver !== key) this.setState({ dragOver: key }); };
+    const row = (f) => {
+      const h = this.hourIn(shown, f.tz), st = this.status(h);
+      const off = this.offsetH(shown, f.tz);
+      const offS = (off >= 0 ? '+' : '\u2212') + Math.abs(off) + 'H / ' + f.abbr.toUpperCase();
+      const myDay = this.ymd(shown), theirDay = this.ymd(shown, f.tz);
+      let dayTag = '';
+      if (theirDay > myDay) dayTag = ' \u00B7 +1 DAY'; else if (theirDay < myDay) dayTag = ' \u00B7 \u22121 DAY';
+      return {
+        isRow: true, isHeader: false, name: f.name,
+        avatar: f.em || f.name[0], avBg: f.em ? t.seg : 'rgba(15,172,237,0.14)',
+        offset: offS + dayTag,
+        time: this.fmt(shown, f.tz, use24),
+        state: st.label, stateColor: st.color || t.ter, dim: st.dim,
+        rowBg: st.night ? (dark ? 'rgba(94,92,230,0.10)' : 'rgba(94,92,230,0.07)') : 'transparent',
+        menuOpen: s.rowMenu === f.name,
+        openMenu: () => this.setState({ rowMenu: s.rowMenu === f.name ? null : f.name }),
+        closeMenu: () => this.setState({ rowMenu: null }),
+        block: () => this.setState({ rowMenu: null, blocked: [...s.blocked, { name: f.name, since: 'Aug 2026' }], blockToast: { name: f.name, rotated: false } }),
+        remove: () => this.setState({ rowMenu: null, removed: [...s.removed, f.name] }),
+        dragStart: (e) => { try { e.dataTransfer.setData('text/plain', f.name); e.dataTransfer.effectAllowed = 'move'; } catch (x) {} this.setState({ _drag: f.name }); },
+        over: allowOver(effPack(f) || 'ungrouped'),
+        drop: assignTo(effPack(f) || null)
+      };
+    };
+    const denRows = [];
+    people.filter(p => !effPack(p) && !gone.includes(p.name)).forEach(p => denRows.push(row(p)));
+    const packs = s.packs;
+    packs.forEach(pk => {
+      const members = people.filter(p => effPack(p) === pk.id && !gone.includes(p.name));
+      const open = s.packOpen[pk.id] !== false;
+      denRows.push({
+        isHeader: true, isRow: false, name: pk.label, count: members.length,
+        chev: open ? 'rotate(0deg)' : 'rotate(-90deg)',
+        toggle: () => this.setState({ packOpen: { ...s.packOpen, [pk.id]: !open } }),
+        over: allowOver(pk.id),
+        drop: assignTo(pk.id),
+        hl: s.dragOver === pk.id ? '#0FACED' : 'transparent',
+        menuOpen: s.packMenu === pk.id,
+        openMenu: () => this.setState({ packMenu: s.packMenu === pk.id ? null : pk.id }),
+        closeMenu: () => this.setState({ packMenu: null }),
+        delKeepLabel: 'Delete ' + (team ? 'group' : 'pack') + ' \u2014 keep people',
+        delAllLabel: 'Delete ' + (team ? 'group' : 'pack') + ' + remove people',
+        delKeep: () => {
+          const a = { ...s.assign };
+          members.forEach(m => { a[m.name] = null; });
+          this.setState({ packs: packs.filter(x => x.id !== pk.id), assign: a, packMenu: null });
+        },
+        delAll: () => this.setState({ packs: packs.filter(x => x.id !== pk.id), removed: [...s.removed, ...members.map(m => m.name)], packMenu: null })
+      });
+      if (open) members.forEach(p => denRows.push(row(p)));
+    });
+
+    const youH = this.hourIn(shown, tzName), youSt = this.status(youH);
+    const relMin = Math.round((shown.getTime() - s.now.getTime()) / 60000);
+    const relS = live ? 'NOW' : '+' + Math.floor(relMin / 60) + 'H ' + (relMin % 60) + 'M \u00B7 ' + this.wday(shown, tzName).toUpperCase() + ' ' + this.fmt(shown, tzName, use24);
+
+    const votes = s.votes;
+    const meets = [
+      { id: 1, mine: true, code: 'HOWL\u00B73F8Q-1M7Z', range: 'Aug 8\u201310', going: 7, slots: [
+        { iso: '2026-08-08T21:00', yes: 3, maybe: 1, no: 2 },
+        { iso: '2026-08-09T20:00', yes: 5, maybe: 1, no: 0 },
+        { iso: '2026-08-10T19:30', yes: 2, maybe: 2, no: 2 }
+      ]},
+      { id: 2, mine: false, by: 'Kira', range: 'Aug 8\u201310', going: 5, slots: [
+        { iso: '2026-08-08T21:00', yes: 2, maybe: 0, no: 1 },
+        { iso: '2026-08-09T19:00', yes: 3, maybe: 1, no: 0 },
+        { iso: '2026-08-11T00:30', yes: 1, maybe: 1, no: 2 }
+      ]}
+    ];
+    if (s.joined) meets.push({ id: 3, mine: false, by: 'Sable', range: 'Aug 21\u201323', going: 5, slots: [
+      { iso: '2026-08-21T20:00', yes: 2, maybe: 1, no: 0 },
+      { iso: '2026-08-22T20:00', yes: 3, maybe: 0, no: 1 },
+      { iso: '2026-08-23T18:00', yes: 1, maybe: 2, no: 1 }
+    ]});
+    const wd = (iso) => {
+      const d = new Date(iso);
+      return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d) + ' \u00B7 ' + this.fmt(d, tzName, use24);
+    };
+    const meetRows = meets.map(m => {
+      const answered = m.slots.some((sl, i) => votes[m.id + '-' + i]);
+      return {
+        title: m.mine ? 'Your ' + meetNoun : m.by + '\u2019s ' + meetNoun,
+        meta: m.range + ' \u00B7 ' + m.going + ' in \u00B7 ' + m.slots.length + ' slots',
+        pill: m.mine ? (team ? 'Organizer' : 'Host') : (answered ? 'You: voted \u2713' : 'RSVP needed'),
+        pillFg: m.mine ? '#0FACED' : (answered ? '#30D158' : '#FF9F0A'),
+        pillBg: m.mine ? 'rgba(15,172,237,0.12)' : (answered ? 'rgba(48,209,88,0.12)' : 'rgba(255,159,10,0.12)'),
+        open: () => this.setState({ meetView: 'detail', meetSel: m.id })
+      };
+    });
+    const det = meets.find(m => m.id === s.meetSel);
+    let detSlots = [], bestIdx = -1;
+    if (det) {
+      let bestScore = -1;
+      det.slots.forEach((sl, i) => {
+        const v = votes[det.id + '-' + i];
+        const score = (sl.yes + (v === 'yes' ? 1 : 0)) * 2 + (sl.maybe + (v === 'maybe' ? 1 : 0));
+        if (score > bestScore) { bestScore = score; bestIdx = i; }
+      });
+      detSlots = det.slots.map((sl, i) => {
+        const k = det.id + '-' + i, v = votes[k];
+        const yes = sl.yes + (v === 'yes' ? 1 : 0), maybe = sl.maybe + (v === 'maybe' ? 1 : 0), no = sl.no + (v === 'no' ? 1 : 0);
+        const tot = Math.max(1, yes + maybe + no);
+        const set = (val) => () => this.setState({ votes: { ...votes, [k]: votes[k] === val ? undefined : val } });
+        const isBest = i === bestIdx;
+        const roster = ['Moss', 'Fen', 'Vex', 'Sable', 'Juno', 'Ash', 'Kira'];
+        const rot = roster.slice(i).concat(roster.slice(0, i));
+        const voters = det.mine ? []
+          .concat(rot.slice(0, yes).map(n => ({ name: n, vote: 'yes', dot: '#30D158' })))
+          .concat(rot.slice(yes, yes + maybe).map(n => ({ name: n, vote: 'maybe', dot: '#FF9F0A' })))
+          .concat(rot.slice(yes + maybe, yes + maybe + no).map(n => ({ name: n, vote: 'no', dot: t.hairStrong }))) : [];
+        const expanded = s.expandedSlot === k;
+        return {
+          when: wd(sl.iso), isBest, canVote: !det.mine,
+          isMine: det.mine, voters, expanded,
+          toggleNames: () => this.setState({ expandedSlot: expanded ? null : k }),
+          expandLabel: expanded ? 'Hide names' : 'Who said what \u25BE',
+          bg: isBest ? 'rgba(15,172,237,0.07)' : t.well,
+          border: isBest ? 'rgba(15,172,237,0.45)' : t.hair,
+          wYes: Math.round(yes / tot * 100) + '%', wMaybe: Math.round(maybe / tot * 100) + '%', wNo: Math.round(no / tot * 100) + '%',
+          tally: yes + ' yes \u00B7 ' + maybe + ' maybe \u00B7 ' + no + ' no' + (v ? '  \u2014  you: ' + v : ''),
+          yes: set('yes'), no: set('no'), maybe: set('maybe'),
+          yesFg: v === 'yes' ? '#04202E' : t.sub, yesBg: v === 'yes' ? '#0FACED' : 'transparent',
+          noFg: v === 'no' ? '#04202E' : t.sub, noBg: v === 'no' ? '#0FACED' : 'transparent',
+          maybeFg: v === 'maybe' ? '#04202E' : t.sub, maybeBg: v === 'maybe' ? '#0FACED' : 'transparent'
+        };
+      });
+    }
+    const createRows = s.createSlots.map((iso, i) => ({
+      when: wd(iso),
+      remove: () => this.setState({ createSlots: s.createSlots.filter((x, j) => j !== i) })
+    }));
+    const shareRows = (meets[0].slots).map(sl => ({ when: wd(sl.iso) }));
+
+    const seg = (on) => ({ w: on ? '600' : '500', c: on ? t.text : t.sub, b: on ? t.seg : 'transparent' });
+    const dB = seg(tab === 'den'), mB = seg(tab === 'meetups');
+    const aC = seg(s.addTab === 'code'), aM = seg(s.addTab === 'manual');
+    const stTab = s.settingsTab;
+    const tb = (on) => ({ b: on ? t.rowSel : 'transparent', c: on ? '#0FACED' : t.sub });
+    const gB = tb(stTab === 'general'), acB = tb(stTab === 'account'), blB = tb(stTab === 'blocked'), abB = tb(stTab === 'about');
+    const pick = (on) => ({ c: on ? '#04202E' : t.sub, b: on ? '#0FACED' : 'transparent' });
+    const ip = pick(s.iconStyle === 'paw'), it = pick(s.iconStyle === 'time');
+    const f12 = pick(!use24), f24 = pick(use24);
+    const cloud = this.props.cloudState || 'ok';
+    const cloudBlocked = cloud === 'signed-out' || cloud === 'drive-off' || cloud === 'restricted';
+    const syncMode = cloud === 'offline' ? 'offline' : (this.props.syncState || 'synced');
+    const delReady = s.alertTyped.trim().toUpperCase() === 'DELETE';
+    const codeReal = s.codeReal, codeMask = 'DEN\u00B7\u2022\u2022\u2022\u2022-\u2022\u2022\u2022\u2022';
+    const codeShown = s.streamer ? codeMask : codeReal;
+    const joinOk = /^HOWL\u00B7[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(s.joinCode);
+
+    return {
+      t, panelOpen: s.panelOpen,
+      modeGlyph: dark ? '\u2600' : '\u263E',
+      pawBg: s.panelOpen ? t.rowSel : 'transparent',
+      menuClock: new Intl.DateTimeFormat(use24 ? 'en-GB' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: !use24 }).format(s.now),
+      toggleDark: () => this.setState({ dark: !dark }),
+      togglePanel: () => this.setState({ panelOpen: !s.panelOpen }),
+      tabDen: () => this.setState({ tab: 'den' }),
+      tabMeet: () => this.setState({ tab: 'meetups', meetView: 'list', meetSel: null }),
+      wDen: dB.w, cDen: dB.c, bDen: dB.b, wMeet: mB.w, cMeet: mB.c, bMeet: mB.b,
+      showDen: tab === 'den' && !cloudBlocked,
+      denEmpty: !!this.props.emptyDen,
+      denFull: !this.props.emptyDen,
+      emptyTitle: team ? 'Your team is empty' : 'Your den is empty',
+      emptyLine: team
+        ? 'Your team is the people you schedule with \u2014 add them once and their local time is always one click away.'
+        : 'Your den is the people you actually make plans with \u2014 add them once and their local time is always one click away.',
+      showMeetList: tab === 'meetups' && s.meetView === 'list' && !cloudBlocked,
+      showCreate: tab === 'meetups' && s.meetView === 'create' && !cloudBlocked,
+      showShare: tab === 'meetups' && s.meetView === 'share' && !cloudBlocked,
+      showDetail: tab === 'meetups' && s.meetView === 'detail' && !!det && !cloudBlocked,
+      scrubOff: s.scrubOff, scrubRel: relS,
+      scrubLeft: 'IF WE MET AT\u2026 \u00B7 ' + tzName.split('/').pop().replace('_', ' ').toUpperCase(),
+      setScrub: (e) => this.setState({ scrubOff: parseInt(e.target.value, 10) }),
+      scrubNow: () => this.setState({ scrubOff: 0 }),
+      youCity: tzName.split('/').pop().replace('_', ' '),
+      youTime: this.fmt(shown, tzName, use24),
+      youState: youSt.label, youStateColor: youSt.color || t.ter,
+      denRows, meetRows,
+      youOver: allowOver('ungrouped'), youDrop: assignTo(null),
+      youHl: s.dragOver === 'ungrouped' ? '#0FACED' : 'transparent',
+      newPackOpen: s.newPackOpen, newPackClosed: !s.newPackOpen,
+      newPackName: s.newPackName,
+      setNewPackName: (e) => this.setState({ newPackName: e.target.value }),
+      openNewPack: () => this.setState({ newPackOpen: true, newPackName: '' }),
+      cancelNewPack: () => this.setState({ newPackOpen: false }),
+      createPack: () => {
+        const nm = s.newPackName.trim();
+        if (!nm) return;
+        const id = nm.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+        this.setState({ packs: [...s.packs, { id, label: nm.toUpperCase() }], newPackOpen: false, newPackName: '', packOpen: { ...s.packOpen, [id]: true } });
+      },
+      newPackLabel: '+ New ' + (team ? 'group' : 'pack'),
+      packPlaceholder: (team ? 'Group' : 'Pack') + ' name',
+      dragHint: 'Drag a name onto a ' + (team ? 'group' : 'pack') + ' header to move them \u2014 drop on Your time to ungroup.',
+      goCreate: () => this.setState({ meetView: 'create' }),
+      denLabel: team ? 'Team' : 'Den', meetLabel: team ? 'Meetings' : 'Meetups',
+      joinTitle: 'Join a ' + meetNoun,
+      codeTabLabel: team ? 'Member code' : 'Friend code',
+      meetListHint: (team ? 'Meetings' : 'Meetups') + ' are join-by-code \u2014 no invites, no titles. Drop the code where your ' + (team ? 'group' : 'pack') + ' talks.',
+      shareHint: 'Paste the link where your ' + (team ? 'group talks \u2014 Slack, the channel.' : 'pack talks \u2014 Discord, the group chat.') + ' Anyone with it can vote. No DenTime yet? They get the download page, not a preview.',
+      vocPreview: team ? '\u201CTeam \u00B7 groups \u00B7 meetings \u00B7 organizer \u00B7 member code\u201D' : '\u201CDen \u00B7 packs \u00B7 meetups \u00B7 host \u00B7 friend code\u201D',
+      vocDen: () => this.setState({ vocab: 'den' }), vocTeam: () => this.setState({ vocab: 'team' }),
+      cVocDen: (!team ? '#04202E' : t.sub), bVocDen: (!team ? '#0FACED' : 'transparent'),
+      cVocTeam: (team ? '#04202E' : t.sub), bVocTeam: (team ? '#0FACED' : 'transparent'),
+      backToMeetList: () => this.setState({ meetView: 'list', meetSel: null }),
+      confirmCreate: () => this.setState({ meetView: 'share' }),
+      createRows, slotCount: s.createSlots.length,
+      newSlotDate: s.newSlotDate, newSlotTime: s.newSlotTime,
+      setNewSlotDate: (e) => this.setState({ newSlotDate: e.target.value }),
+      setNewSlotTime: (e) => this.setState({ newSlotTime: e.target.value }),
+      addSlot: () => { if (s.createSlots.length < 5) this.setState({ createSlots: [...s.createSlots, s.newSlotDate + 'T' + s.newSlotTime] }); },
+      shareRows,
+      copyMeetCode: () => { try { navigator.clipboard.writeText('HOWL\u00B73F8Q-1M7Z'); } catch (e) {} this.setState({ copiedMeet: true }); setTimeout(() => this.setState({ copiedMeet: false }), 1400); },
+      copyMeetLabel: s.copiedMeet ? 'Copied \u2713' : 'Copy',
+      copyLink: () => { try { navigator.clipboard.writeText('https://dentime.app/j/3F8Q1M7Z'); } catch (e) {} this.setState({ copiedLink: true }); setTimeout(() => this.setState({ copiedLink: false }), 1400); },
+      copyLinkLabel: s.copiedLink ? 'Link copied \u2713' : 'Copy link',
+      detTitle: det ? (det.mine ? 'Your ' + meetNoun : det.by + '\u2019s ' + meetNoun) : '',
+      detMeta: det ? (det.range + ' \u00B7 ' + det.going + ' in \u00B7 times shown in your local time') : '',
+      detSlots, detIsMine: !!det && det.mine, detIsTheirs: !!det && !det.mine,
+      whosInLabel: (team ? 'ATTENDING' : 'WHO\u2019S IN') + (det ? ' \u2014 ' + det.going : ''),
+      detPeople: det && !det.mine ? [
+        { name: det.by, role: team ? '\u00B7 organizer' : '\u00B7 host', canBlock: false, block: () => {} },
+        { name: 'Moss', role: '', canBlock: true, block: () => this.setState({ blocked: [...s.blocked, { name: 'Moss', since: 'Aug 2026' }], blockToast: { name: 'Moss', rotated: false } }) },
+        { name: 'Fen', role: '', canBlock: true, block: () => this.setState({ blocked: [...s.blocked, { name: 'Fen', since: 'Aug 2026' }], blockToast: { name: 'Fen', rotated: false } }) },
+        { name: 'You', role: '', canBlock: false, block: () => {} }
+      ].filter(p => !s.blocked.some(b => b.name === p.name)) : [],
+      openAdd: () => this.setState({ sheet: 'add', code: '', codeErr: false }),
+      openJoin: () => this.setState({ sheet: 'join', joinCode: '' }),
+      closeSheet: () => this.setState({ sheet: null }),
+      addOpen: s.sheet === 'add', joinOpen: s.sheet === 'join',
+      addTabCode: () => this.setState({ addTab: 'code' }), addTabManual: () => this.setState({ addTab: 'manual' }),
+      wAddCode: aC.w, cAddCode: aC.c, bAddCode: aC.b, wAddMan: aM.w, cAddMan: aM.c, bAddMan: aM.b,
+      addIsCode: s.addTab === 'code', addIsManual: s.addTab === 'manual',
+      code: s.code, codeErr: s.codeErr, codeBorder: s.codeErr ? t.err : t.hair,
+      setCode: (e) => {
+        let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^DEN/, '');
+        v = v.slice(0, 8);
+        this.setState({ code: v.length ? 'DEN\u00B7' + v.slice(0, 4) + (v.length > 4 ? '-' + v.slice(4) : '') : '', codeErr: false });
+      },
+      manName: s.manName, setManName: (e) => this.setState({ manName: e.target.value }),
+      tzOpen: s.tzOpen,
+      toggleTz: () => this.setState({ tzOpen: !s.tzOpen }),
+      manTzLabel: ({ 'America/Chicago': 'America/Chicago (CT)', 'America/New_York': 'America/New York (ET)', 'Europe/Berlin': 'Europe/Berlin (CET)', 'Asia/Tokyo': 'Asia/Tokyo (JST)', 'Australia/Sydney': 'Australia/Sydney (AET)' })[s.manTz],
+      tzRows: [
+        { v: 'America/Chicago', label: 'America/Chicago (CT)' },
+        { v: 'America/New_York', label: 'America/New York (ET)' },
+        { v: 'Europe/Berlin', label: 'Europe/Berlin (CET)' },
+        { v: 'Asia/Tokyo', label: 'Asia/Tokyo (JST)' },
+        { v: 'Australia/Sydney', label: 'Australia/Sydney (AET)' }
+      ].map(z => ({ label: z.label, check: z.v === s.manTz ? '\u2713' : '', pick: () => this.setState({ manTz: z.v, tzOpen: false }) })),
+      addPerson: () => {
+        if (s.addTab === 'code') {
+          if (!/^DEN\u00B7[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(s.code)) { this.setState({ codeErr: true }); return; }
+          this.setState({ sheet: null, tab: 'den', extraFriends: [...s.extraFriends, { name: 'Wren', tz: 'America/Denver', abbr: 'MT', pack: null }] });
+        } else {
+          const nm = s.manName.trim() || 'Vex';
+          const abbrs = { 'America/Chicago': 'CT', 'America/New_York': 'ET', 'Europe/Berlin': 'CET', 'Asia/Tokyo': 'JST', 'Australia/Sydney': 'AET' };
+          this.setState({ sheet: null, tab: 'den', manName: '', extraFriends: [...s.extraFriends, { name: nm, tz: s.manTz, abbr: abbrs[s.manTz] || 'TZ', pack: null }] });
+        }
+      },
+      packSize: people.length,
+      joinCode: s.joinCode, joinBorder: joinOk ? '#0FACED' : t.hair, joinPreview: joinOk,
+      setJoinCode: (e) => {
+        let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^HOWL/, '');
+        v = v.slice(0, 8);
+        this.setState({ joinCode: v.length ? 'HOWL\u00B7' + v.slice(0, 4) + (v.length > 4 ? '-' + v.slice(4) : '') : '' });
+      },
+      joinMeetup: () => { if (joinOk) this.setState({ sheet: null, joined: true, meetView: 'list' }); },
+      copyCode: () => { try { navigator.clipboard.writeText(codeReal); } catch (e) {} this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1400); },
+      copyBtn: s.copied ? 'Copied \u2713' : 'Copy',
+      codeLabel: s.copied ? 'COPIED \u2713' : codeShown + ' \u22A1',
+      codeColor: s.copied ? '#30D158' : t.ter,
+      codeDisplay: codeShown,
+      acctName: s.streamer ? '\u2022\u2022\u2022\u2022\u2022\u2022' : 'Nathanial',
+      openSettings: () => this.setState({ settingsOpen: true, panelOpen: false }),
+      closeSettings: () => this.setState({ settingsOpen: false }),
+      settingsOpen: s.settingsOpen,
+      settingsTitle: stTab === 'general' ? 'General' : stTab === 'account' ? 'Account' : stTab === 'blocked' ? 'Blocked' : 'About DenTime',
+      setGeneral: () => this.setState({ settingsTab: 'general' }), setAccount: () => this.setState({ settingsTab: 'account' }),
+      setBlocked: () => this.setState({ settingsTab: 'blocked' }), setAbout: () => this.setState({ settingsTab: 'about' }),
+      bGeneral: gB.b, cGeneral: gB.c, bAccount: acB.b, cAccount: acB.c, bBlocked: blB.b, cBlocked: blB.c, bAbout: abB.b, cAbout: abB.c,
+      showGeneral: stTab === 'general', showAccount: stTab === 'account', showBlocked: stTab === 'blocked', showAbout: stTab === 'about',
+      toggleLogin: () => this.setState({ launchLogin: !s.launchLogin }),
+      loginBg: s.launchLogin ? '#0FACED' : (dark ? '#3A3D42' : '#CBD0DA'), loginJust: s.launchLogin ? 'flex-end' : 'flex-start',
+      set12h: () => this.setState({ use24h: false }), set24h: () => this.setState({ use24h: true }),
+      c12: f12.c, b12: f12.b, c24: f24.c, b24: f24.b,
+      setIconPaw: () => this.setState({ iconStyle: 'paw' }),
+      setIconTime: () => this.setState({ iconStyle: 'time' }),
+      cIp: ip.c, bIp: ip.b, cIt: it.c, bIt: it.b,
+      sleepStart: s.sleepStart, sleepEnd: s.sleepEnd,
+      setSleepStart: (e) => this.setState({ sleepStart: e.target.value }),
+      setSleepEnd: (e) => this.setState({ sleepEnd: e.target.value }),
+      toggleStreamer: () => this.setState({ streamer: !s.streamer }),
+      streamerBg: s.streamer ? '#0FACED' : (dark ? '#3A3D42' : '#CBD0DA'), streamerJust: s.streamer ? 'flex-end' : 'flex-start',
+      alertOpen: !!s.alert,
+      alertTitle: ({ rotate: 'Rotate your ' + (team ? 'member' : 'friend') + ' code?', signout: 'Sign out of DenTime?', delete: 'Delete your account?', delete2: 'Really delete everything?' })[s.alert] || '',
+      alertMsg: ({ rotate: 'Your old code stops working right away. People already in your ' + (team ? 'team' : 'den') + ' stay.', signout: 'Your ' + (team ? 'team' : 'den') + ' stays on this Mac. Sign back in with Apple anytime.', delete: 'Deletes your ' + (team ? 'team, groups, meetings' : 'den, packs, meetups') + ' and public profile from your iCloud. People who saved your code won\u2019t be able to resolve it.', delete2: 'There\u2019s no undo. Type DELETE to confirm.' })[s.alert] || '',
+      alertAction: ({ rotate: 'Rotate code', signout: 'Sign out', delete: 'Delete account\u2026', delete2: 'Delete forever' })[s.alert] || '',
+      alertNeedsType: s.alert === 'delete2',
+      alertTyped: s.alertTyped,
+      setAlertTyped: (e) => this.setState({ alertTyped: e.target.value }),
+      alertBtnBg: s.alert === 'delete2' ? (delReady ? (dark ? '#FF453A' : '#D70015') : (dark ? '#3A3D42' : '#CBD0DA')) : (s.alert === 'delete' ? (dark ? '#FF453A' : '#D70015') : '#0FACED'),
+      alertBtnFg: (s.alert === 'delete' || s.alert === 'delete2') ? '#FFFFFF' : '#04202E',
+      openRotate: () => this.setState({ alert: 'rotate' }),
+      openSignout: () => this.setState({ alert: 'signout' }),
+      openDelete: () => this.setState({ alert: 'delete', alertTyped: '' }),
+      closeAlert: () => this.setState({ alert: null }),
+      alertConfirm: () => {
+        if (s.alert === 'rotate') this.setState({ alert: null, codeReal: 'DEN\u00B79Q2R-5XWK' });
+        else if (s.alert === 'delete') this.setState({ alert: 'delete2', alertTyped: '' });
+        else if (s.alert === 'delete2') { if (delReady) this.setState({ alert: null, alertTyped: '' }); }
+        else this.setState({ alert: null });
+      },
+      blockedRows: s.blocked.map((b, i) => ({ name: b.name, since: 'blocked ' + b.since, unblock: () => this.setState({ blocked: s.blocked.filter((x, j) => j !== i) }) })),
+      hasBlocked: s.blocked.length > 0, noBlocked: s.blocked.length === 0,
+      exampleRows: [
+        { name: 'Tokyo', tz: 'Asia/Tokyo', abbr: 'JST' },
+        { name: 'London', tz: 'Europe/London', abbr: 'BST' },
+        { name: 'Los Angeles', tz: 'America/Los_Angeles', abbr: 'PT' }
+      ].filter(x => !s.exGone.includes(x.name)).map(x => ({
+        name: x.name, abbr: x.abbr, time: this.fmt(s.now, x.tz, use24),
+        del: () => this.setState({ exGone: [...s.exGone, x.name] })
+      })),
+      pickNightLabel: 'Pick a night with your ' + (team ? 'group' : 'pack') + ' \u2192',
+      cloudBlocked,
+      cloudTitle: ({ 'signed-out': 'Sign in to iCloud', 'drive-off': 'Turn on iCloud Drive for DenTime', restricted: 'iCloud is restricted on this Mac' })[cloud] || '',
+      cloudMsg: ({ 'signed-out': 'Sign in to iCloud in System Settings to use DenTime.', 'drive-off': 'System Settings \u203A Apple ID \u203A iCloud \u203A iCloud Drive \u2014 turn on the DenTime toggle.', restricted: 'This account can\u2019t use iCloud features, so DenTime can\u2019t sync. There\u2019s nothing to fix from inside the app.' })[cloud] || '',
+      cloudHasBtn: cloud === 'signed-out' || cloud === 'drive-off',
+      syncDot: ({ synced: '#30D158', syncing: '#0FACED', failed: t.err, offline: t.ter })[syncMode],
+      syncFg: syncMode === 'failed' ? t.err : t.ter,
+      syncLabel: ({ synced: 'Synced', syncing: 'Syncing\u2026', failed: 'Sync failed', offline: 'Offline \u2014 ' + (team ? 'team' : 'den') + ' still works' })[syncMode],
+      syncFailed: syncMode === 'failed',
+      blockToastOpen: !!s.blockToast,
+      blockToastCanRotate: !!s.blockToast && !s.blockToast.rotated,
+      blockToastMsg: s.blockToast ? (s.blockToast.rotated ? 'Code rotated \u2713 \u00B7 ' + codeShown : s.blockToast.name + ' is hidden from your ' + (team ? 'team' : 'den') + ' \u2014 you won\u2019t see them. Rotate your ' + (team ? 'member' : 'friend') + ' code too?') : '',
+      toastRotate: () => this.setState({ codeReal: 'DEN\u00B79Q2R-5XWK', blockToast: { ...s.blockToast, rotated: true } }),
+      toastDismiss: () => this.setState({ blockToast: null }),
+      noop: () => {}
+    };
+  }
+}
+</script>
+</body>
+</html>
+
