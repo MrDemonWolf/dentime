@@ -26,7 +26,11 @@ Everything is scaffolding. There is no feature UI, and that is deliberate.
 - **CI** — Biome/typecheck/docs build on Linux, `swift build` + `swift test` on macOS, plus scope guards that fail the build on `import EventKit`, `import StoreKit`, or a resurrected backend dependency.
 - **Planning docs committed in-tree** under `docs/planning/` — see Key references.
 - **Design v2 imported** to `docs/design/`, reference only. No SwiftUI written from it.
-- **Jira project created** — **MDW DenTime**, key **`TIME`**, team-managed Kanban, at https://mrdemonwolf.atlassian.net/jira/software/projects/TIME
+- **Jira board built and verified** — **MDW DenTime**, key **`TIME`**, team-managed Kanban, at https://mrdemonwolf.atlassian.net/jira/software/projects/TIME
+  - 77 issues: 8 epics (`TIME-1`–`TIME-8`) and 69 tasks (`TIME-9`–`TIME-77`)
+  - Keys line up exactly with `docs/planning/JIRA-BACKLOG.md`, so that file remains a valid index
+  - Verified by query: 0 orphan tasks, 0 tasks without labels, 14 in Done (the already-completed scaffold and DenTimeCore work), everything else To Do
+  - **No need to re-verify this.** Just work it.
 - **Branch protection** aligned to the house "Solo Main Protection" ruleset: PRs required, 0 approvals, linear history, admin bypass. **You cannot push straight to `main`** — branch and open a PR.
 
 ---
@@ -90,6 +94,13 @@ Four are open. Two are majors and need a real look, not a rubber stamp:
 ### 4. Then work the backlog
 
 `docs/planning/PHASES.md` has the twelve phases with estimates. Phases 4, 5, 6, 9 and 11 have no design dependency; 7, 8 and 10 are design-ready against `docs/design/`.
+
+The Jira board mirrors it. Phase 2 is epic `TIME-2`, tasks `TIME-17`–`TIME-22`.
+
+### Two gotchas if you automate against Jira again
+
+- **Never write `&amp;` into a summary.** The API stores the literal entity rather than an ampersand. Write a plain `&`.
+- **A malformed API response does not mean the write failed.** During the board build, two mutating calls came back as an empty search-shaped payload while having actually succeeded. Read back before retrying, or you will create duplicates.
 
 ---
 
