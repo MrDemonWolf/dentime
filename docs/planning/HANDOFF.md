@@ -82,14 +82,25 @@ All of this is manual clicking in the CloudKit dashboard. Follow `docs/planning/
 
 This blocks everything from phase 4 onward. Do it in one sitting.
 
-### 3. Decide on the open Dependabot PRs
+### 3. Dependabot — mostly handled
 
-Four are open. Two are majors and need a real look, not a rubber stamp:
+Three of four are merged and `main` is green with all of them: GitHub Actions ×6 (#4), `@types/node` 26 (#6), and **fumadocs-mdx 15** (#3, a major — it needed no `source.ts` changes after all).
 
-- **#5** TypeScript 5.9.3 → 7.0.2 — major
-- **#3** fumadocs-mdx 14.3.2 → 15.2.2 — major, will likely need `source.ts` changes
-- **#4** GitHub Actions group — safe
-- **#6** `@types/node` 25 → 26 — safe
+**Still open: #5, TypeScript 5.9.3 → 7.0.2.** Genuinely broken, not a flake. TypeScript 7 removed the `baseUrl` option and `apps/docs/tsconfig.json` sets it, so typecheck dies with `TS5102`. The fix is one deleted line — the `paths` entries are already `./`-prefixed and resolve relative to the tsconfig without it — but TS 7 is the Go-native rewrite and Next 16 plus fumadocs have not been widely exercised against it. It is a dev dependency; nothing ships with it. Awaiting a decision.
+
+#### Every future Dependabot PR will fail CI the same way — this is not a real failure
+
+Dependabot bumps `package.json` but writes a `bun.lock` that does not satisfy it. CI runs `bun install --frozen-lockfile`, which correctly refuses, and every step after it fails. It looks like the upgrade is broken. It is not.
+
+Fix, per branch:
+
+```bash
+gh pr checkout <n>
+bun install          # regenerates bun.lock
+git commit -am "chore(deps): regenerate bun.lock" && git push
+```
+
+Do not "fix" this by dropping `--frozen-lockfile` from CI — that flag is what stops a bad lockfile reaching `main`.
 
 ### 4. Then work the backlog
 
