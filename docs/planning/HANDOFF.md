@@ -88,11 +88,19 @@ Three of four are merged and `main` is green with all of them: GitHub Actions ×
 
 **Still open: #5, TypeScript 5.9.3 → 7.0.2.** Genuinely broken, not a flake. TypeScript 7 removed the `baseUrl` option and `apps/docs/tsconfig.json` sets it, so typecheck dies with `TS5102`. The fix is one deleted line — the `paths` entries are already `./`-prefixed and resolve relative to the tsconfig without it — but TS 7 is the Go-native rewrite and Next 16 plus fumadocs have not been widely exercised against it. It is a dev dependency; nothing ships with it. Awaiting a decision.
 
-#### Every future Dependabot PR will fail CI the same way — this is not a real failure
+#### One specific Dependabot failure is a false alarm — check before assuming
 
-Dependabot bumps `package.json` but writes a `bun.lock` that does not satisfy it. CI runs `bun install --frozen-lockfile`, which correctly refuses, and every step after it fails. It looks like the upgrade is broken. It is not.
+Dependabot often bumps `package.json` but writes a `bun.lock` that does not satisfy it. CI runs `bun install --frozen-lockfile`, which correctly refuses, and every step after it fails. That looks like a broken upgrade and is not one.
 
-Fix, per branch:
+**Confirm it is this before reaching for the fix.** The signature is the install step itself failing with:
+
+```
+error: lockfile had changes, but lockfile is frozen
+```
+
+If the install succeeds and something later fails, the upgrade is genuinely incompatible — that is what happened to TypeScript 7 above, which died at typecheck with `TS5102`, not at install. Regenerating the lockfile would not have saved it, and doing so blindly would have buried a real incompatibility.
+
+Fix, once you have confirmed the frozen-lockfile signature:
 
 ```bash
 gh pr checkout <n>
