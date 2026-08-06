@@ -1,0 +1,58 @@
+name: Bug report
+description: Something in DenTime is not doing what it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. If this is about someone's behaviour rather than the app's,
+        use the Report option in the app instead — it opens a prefilled email and goes
+        straight to us.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the Den tab
+        2. Drag the Time Peek scrubber to +6h
+        3. …
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: DenTime version
+      description: Found in Settings → About.
+    validations:
+      required: true
+
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "14.5"
+    validations:
+      required: true
+
+  - type: input
+    id: timezones
+    attributes:
+      label: Time zones involved
+      description: If the bug is about times or days, this is usually the whole story.
+      placeholder: "America/Chicago and Pacific/Auckland"
+
+  - type: textarea
+    id: anything-else
+    attributes:
+      label: Anything else
+      description: Screenshots help. Please crop out other people's names if you can.

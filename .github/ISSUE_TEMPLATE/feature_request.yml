@@ -1,0 +1,34 @@
+name: Feature request
+description: Suggest something DenTime should do
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check `docs/planning/SPEC.md` first — a few things are deliberately out of
+        scope and will be closed: calendar integration, subscriptions or free tiers, push
+        invites and notifications, free-text meetup titles, per-person working hours,
+        recurring meetups, a web app, and Android.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: Describe the situation, not the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you have in mind
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: I have read the out-of-scope list in `docs/planning/SPEC.md`
+          required: true
