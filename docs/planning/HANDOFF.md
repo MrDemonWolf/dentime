@@ -82,11 +82,13 @@ All of this is manual clicking in the CloudKit dashboard. Follow `docs/planning/
 
 This blocks everything from phase 4 onward. Do it in one sitting.
 
-### 3. Dependabot — mostly handled
+### 3. Dependabot — done, nothing open
 
-Three of four are merged and `main` is green with all of them: GitHub Actions ×6 (#4), `@types/node` 26 (#6), and **fumadocs-mdx 15** (#3, a major — it needed no `source.ts` changes after all).
+All four merged and `main` verified green with every one of them: GitHub Actions ×6 (#4), `@types/node` 26 (#6), **fumadocs-mdx 15** (#3, a major that needed no `source.ts` changes), and **TypeScript 7.0.2** (#5).
 
-**Still open: #5, TypeScript 5.9.3 → 7.0.2.** Genuinely broken, not a flake. TypeScript 7 removed the `baseUrl` option and `apps/docs/tsconfig.json` sets it, so typecheck dies with `TS5102`. The fix is one deleted line — the `paths` entries are already `./`-prefixed and resolve relative to the tsconfig without it — but TS 7 is the Go-native rewrite and Next 16 plus fumadocs have not been widely exercised against it. It is a dev dependency; nothing ships with it. Awaiting a decision.
+**You are on TypeScript 7**, the Go-native compiler. It needed exactly one change: `baseUrl` was removed from the language, and `apps/docs/tsconfig.json` set it, so typecheck died with `TS5102`. The `paths` entries were already `./`-prefixed and resolve relative to the tsconfig without it, so deleting the line was the whole fix. Typecheck went from 3.9s to 1.1s.
+
+If a future dependency turns out to need TS 5, that is the thing to reach for — but nothing currently does.
 
 #### One specific Dependabot failure is a false alarm — check before assuming
 
