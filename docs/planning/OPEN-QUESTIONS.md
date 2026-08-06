@@ -70,13 +70,16 @@ Vocabulary and locale change the nouns around the time. They do not change the d
 - **`apps/docs` pages are one-line TODOs.** `privacy` and `support` exist so the routes return 200, which App Review needs, but neither has real copy yet.
 - **CloudKit store bodies are `fatalError("unimplemented")`.** Protocols and signatures are settled; nothing talks to CloudKit yet.
 - **No iOS, iPadOS or watchOS targets.** Phase 2 of the product, and each must reuse `com.mrdemonwolf.dentime` with no suffix when it lands.
-- **`swift build` and `swift test` have not been run on this machine** — the scaffold was authored on Linux, which has no Swift toolchain. The macOS CI job is the first thing that compiles `DenTimeCore`. If it fails, the failure is in freshly written code, not in anything inherited.
-- **`DenTime.xcodeproj` has never been generated or opened.** `xcodegen generate` needs to run once on a Mac to confirm `project.yml` is valid.
+- **`DenTime.xcodeproj` has never been generated or opened.** The scaffold was authored on Linux, which has no Xcode. `xcodegen generate` needs to run once on a Mac to confirm `project.yml` is valid, and `xcodebuild` to confirm the target builds with zero warnings. This is the last unverified piece of the scaffold.
 - **No Jira board exists.** [JIRA-BACKLOG.md](JIRA-BACKLOG.md) holds the ticket ideas and [`prompts/CLAUDE-CHROME-JIRA-SETUP.md`](prompts/CLAUDE-CHROME-JIRA-SETUP.md) is the prompt that creates the board. Neither has been run.
 
 ---
 
 ## Closed
+
+### ~~DenTimeCore had never been compiled~~
+
+Resolved 2026-08-06. The scaffold was written on Linux with no Swift toolchain, so the macOS CI job was the first thing to compile it. It passed on the first run: `swift build` clean, and 44 tests green across `FriendCodeTests`, `ModelTests`, `TimePeekTests` and `TimeZoneResolverTests`, including every DST boundary case.
 
 ### ~~`dentime.mrdemonwolf.com` DNS~~
 

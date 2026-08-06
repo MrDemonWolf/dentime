@@ -107,7 +107,7 @@ Work through the backlog document in order, top to bottom, so the issue numbers 
 - **Assignee:** Nathanial Henniges
 - **Status:** To Do, **except** where the heading ends in ✅ — those are already done, so create them and transition them to **Done**
 
-There are 13 tickets marked ✅ — seven in Setup & Infrastructure and six in DenTimeCore. They are real work that is already finished, and the board should reflect that rather than starting from a fiction.
+There are 14 tickets marked ✅ — eight in Setup & Infrastructure and six in DenTimeCore. They are real work that is already finished, and the board should reflect that rather than starting from a fiction.
 
 Do the tasks epic by epic. After finishing each epic, tell me the key range you created and carry on without waiting for me.
 
@@ -119,7 +119,7 @@ When everything is created, check and report:
 - [ ] 69 tasks exist, for 77 issues in total
 - [ ] every task has a parent epic — no orphans
 - [ ] every task has at least two labels: one phase label and at least one area label
-- [ ] the 13 ✅ tasks are in Done and everything else is in To Do
+- [ ] the 14 ✅ tasks are in Done and everything else is in To Do
 - [ ] every task is assigned to Nathanial Henniges at Medium priority
 - [ ] no duplicate summaries
 - [ ] issue keys run `TIME-1` through `TIME-77` with no gaps
