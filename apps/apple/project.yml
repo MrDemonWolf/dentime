@@ -1,0 +1,62 @@
+# Source of truth for the Xcode project. DenTime.xcodeproj is generated from this file
+# and is gitignored, so never hand-edit the project file — edit here and regenerate:
+#
+#   cd apps/apple && USER=$(whoami) xcodegen generate
+name: DenTime
+
+options:
+  bundleIdPrefix: com.mrdemonwolf
+  createIntermediateGroups: true
+  deploymentTarget:
+    macOS: "14.0"
+  groupSortPosition: top
+  minimumXcodeGenVersion: "2.38.0"
+
+configs:
+  Debug: debug
+  Release: release
+
+configFiles:
+  Debug: Config/Shared.xcconfig
+  Release: Config/Shared.xcconfig
+
+packages:
+  DenTimeCore:
+    path: ../../packages/DenTimeCore
+
+targets:
+  # One target for now. iOS, iPadOS and watchOS are phase 2, and when they land they
+  # reuse this exact bundle ID — see docs/planning/DECISIONS.md, decision 10, and
+  # docs/planning/APPLE.md on Universal Purchase.
+  DenTimeMac:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: DenTimeMac
+    dependencies:
+      - package: DenTimeCore
+        product: DenTimeCore
+    configFiles:
+      Debug: Config/DenTimeMac.xcconfig
+      Release: Config/DenTimeMac.xcconfig
+    settings:
+      base:
+        INFOPLIST_FILE: DenTimeMac/Info.plist
+        CODE_SIGN_ENTITLEMENTS: DenTimeMac/DenTimeMac.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+
+schemes:
+  DenTimeMac:
+    build:
+      targets:
+        DenTimeMac: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
