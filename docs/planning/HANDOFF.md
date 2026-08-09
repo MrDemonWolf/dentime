@@ -17,6 +17,45 @@ Everything is scaffolding. There is no feature UI, and that is deliberate.
 
 ---
 
+## Two machines, one repo path — read this before working
+
+This project is worked from two different computers, and **both check the repo out to the same path**, `~/Developer/mrdemonwolf/dentime`. A terminal gives no hint which one you are on. That has already cost real time once.
+
+| | Linux VPS (`chicago-il-vpc-01`) | MacBook |
+|---|---|---|
+| Claude Code shell runs here | ✅ | ❌ |
+| Docs, TypeScript, planning, Jira, CI | ✅ | ✅ |
+| Authoring Swift source | ✅ | ✅ |
+| `swift build` / `swift test` | ❌ no toolchain | ✅ |
+| `xcodegen`, Xcode, running the app | ❌ | ✅ **only here** |
+| CloudKit dashboard, TestFlight, screenshots | ❌ | ✅ **only here** |
+
+Swift correctness does not depend on having a Mac in hand: CI compiles and tests `DenTimeCore` on a macOS runner on every push. The Mac is needed for the Xcode project, the app itself, and anything involving Apple's web consoles.
+
+**Working loop:** change lands on the VPS and is pushed → `git pull` on the Mac → build. If `project.yml` needs a fix, fix it on either side, push, pull, re-run `xcodegen generate`.
+
+### Check which machine and which branch before you start
+
+```bash
+hostname && git status -sb | head -1
+```
+
+The first line of `git status -sb` gives branch and drift in one glance — `## main...origin/main` means synced, `## main...origin/main [ahead 1, behind 27]` means stop and fix before working.
+
+**How this bites.** The Mac clone drifted onto `codex/repository-reset` — a branch holding only `.gitignore` and `README.md`, which is why `bun install` reported "could not find a package.json". Switching back to `main` then revealed a divergence: one local commit against twenty-seven remote. Neither is a tooling bug; both are two clones quietly falling out of step.
+
+Resync a drifted clone, keeping whatever the local commits were:
+
+```bash
+git branch backup-local-main main   # park local work first — this is what makes the reset safe
+git fetch origin
+git reset --hard origin/main
+bun install
+git branch -D backup-local-main     # once you have confirmed nothing was lost
+```
+
+---
+
 ## What's been done
 
 - **Repo rebuilt** — PRs [#2](https://github.com/MrDemonWolf/dentime/pull/2) and [#7](https://github.com/MrDemonWolf/dentime/pull/7), merged. `main` is green.
