@@ -47,12 +47,15 @@ The first line of `git status -sb` gives branch and drift in one glance — `## 
 Resync a drifted clone, keeping whatever the local commits were:
 
 ```bash
-git branch backup-local-main main   # park local work first — this is what makes the reset safe
+git checkout main                   # FIRST — reset acts on the checked-out branch, not on main
+git branch backup-local-main main   # park local work — this is what makes the reset safe
 git fetch origin
 git reset --hard origin/main
 bun install
 git branch -D backup-local-main     # once you have confirmed nothing was lost
 ```
+
+**The `git checkout main` is not optional.** `git reset --hard origin/main` moves whichever branch is currently checked out. Run it while still sitting on a drifted branch and you rewrite that branch to main's content while leaving the real `main` untouched — the clone looks fixed, the divergence is still there, and now a second branch has been clobbered.
 
 ---
 
