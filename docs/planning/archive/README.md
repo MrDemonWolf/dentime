@@ -2,7 +2,7 @@
 
 **Nothing in this directory is current.** It is kept because knowing *why* a stack was dropped is worth more later than knowing only that it was — otherwise the same idea comes back in six months with nobody able to say what was wrong with it the first time.
 
-If you are looking for what DenTime is now, start at [`CLAUDE.md`](../../../CLAUDE.md) and [`DECISIONS.md`](../DECISIONS.md).
+If you are looking for what DenTime is now, start at [`AGENTS.md`](../../../AGENTS.md) and [`DECISIONS.md`](../DECISIONS.md).
 
 ## What is in here
 
@@ -12,10 +12,10 @@ If you are looking for what DenTime is now, start at [`CLAUDE.md`](../../../CLAU
 | `CC-MVP1.md` | Build prompt for the local-only MVP1 macOS app | Superseded. MVP1 shipped a `UserDefaults`-backed friend list with no sync; the current design is CloudKit end to end. |
 | `CC-MVP2.md` | Build prompt for MVP2 — sync, iOS, meetups, iCal export | Superseded. Its sync design was the Workers/D1 API. iCal export is now cut entirely, not deferred. |
 | `HACKATON.md` | Hackathon planning notes | Historical. |
-| `START_HERE.md` | Onboarding doc for the MVP1 repo | Replaced by the root `README.md` and `CLAUDE.md`. |
+| `START_HERE.md` | Onboarding doc for the MVP1 repo | Replaced by the root `README.md` and `AGENTS.md`. |
 | `TODO.md` | MVP1 task list | Replaced by [`PHASES.md`](../PHASES.md) and [`JIRA-BACKLOG.md`](../JIRA-BACKLOG.md). |
 | `CHANGELOG.md` | Changelog for the MVP1 app | Nothing from MVP1 shipped publicly. |
-| `CLAUDE-mvp1.md` | The MVP1-era `CLAUDE.md` | Replaced by the root `CLAUDE.md`. Kept because it shows what the local-only scope looked like. |
+| `CLAUDE-mvp1.md` | The MVP1-era `CLAUDE.md` | Replaced by the root `AGENTS.md`. Kept because it shows what the local-only scope looked like. |
 
 ## What changed between all of that and now
 

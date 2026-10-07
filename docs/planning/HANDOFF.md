@@ -1,7 +1,8 @@
 # Handoff: DenTime rebuild — continuing on macOS
 
 **Created:** 2026-08-06
-**Next session goal:** Verify the Xcode project on a Mac, finish the Jira board, and start phase 2 (CloudKit).
+**Mac verification:** 2026-10-07 with Xcode 27.0 and XcodeGen 2.46.0
+**Next session goal:** Launch the generated app for the visual smoke test, then start phase 2 (CloudKit).
 
 This document exists because the rebuild was done on a Linux machine with no Swift toolchain. It records what a fresh session needs in order to pick up on a MacBook. Delete it once the Mac-side verification is done.
 
@@ -44,18 +45,23 @@ The first line of `git status -sb` gives branch and drift in one glance — `## 
 
 **How this bites.** The Mac clone drifted onto `codex/repository-reset` — a branch holding only `.gitignore` and `README.md`, which is why `bun install` reported "could not find a package.json". Switching back to `main` then revealed a divergence: one local commit against twenty-seven remote. Neither is a tooling bug; both are two clones quietly falling out of step.
 
-Resync a drifted clone, keeping whatever the local commits were:
+Resync a drifted clone without losing local commits or uncommitted work:
 
 ```bash
-git checkout main                   # FIRST — reset acts on the checked-out branch, not on main
-git branch backup-local-main main   # park local work — this is what makes the reset safe
+git branch --show-current            # note this branch name for stash restoration
+git status --short
+git stash push --include-untracked -m "pre-main-resync"
+git branch backup-local-main main    # preserve local commits on main
+git switch main                      # FIRST — reset acts on the checked-out branch
 git fetch origin
 git reset --hard origin/main
 bun install
-git branch -D backup-local-main     # once you have confirmed nothing was lost
+git stash list --format='%gd %s'     # note the pre-main-resync stash ref, if one was created
 ```
 
-**The `git checkout main` is not optional.** `git reset --hard origin/main` moves whichever branch is currently checked out. Run it while still sitting on a drifted branch and you rewrite that branch to main's content while leaving the real `main` untouched — the clone looks fixed, the divergence is still there, and now a second branch has been clobbered.
+If the stash command saved changes, restore them on the branch you noted above with `git switch <original-branch>` followed by `git stash apply <saved-stash-ref>`. If it says "No local changes to save," skip restoration. Keep the stash and `backup-local-main` until you have verified the recovered work.
+
+**The `git switch main` is not optional.** `git reset --hard origin/main` moves whichever branch is currently checked out. Run it while still sitting on a drifted branch and you rewrite that branch to main's content while leaving the real `main` untouched — the clone looks fixed, the divergence is still there, and now a second branch has been clobbered.
 
 ---
 
@@ -79,9 +85,9 @@ git branch -D backup-local-main     # once you have confirmed nothing was lost
 
 ## Current state
 
-**Working:** everything that can be verified on Linux. `bun install`, `bun run check`, `bun run typecheck`, `bun run test`, `bun run build` all pass from a clean clone. The Swift package builds and tests green on the macOS CI runner. The docs site is deployed.
+**Working:** `bun install`, `bun run check`, `bun run typecheck`, `bun run test`, `bun run build`, and all 44 Swift package tests pass. XcodeGen 2.46.0 generates the project under Xcode 27.0, `DenTimeCore` resolves locally, and the Debug target builds without a development team. The bundle ID resolves to `com.mrdemonwolf.dentime`. The docs site is deployed.
 
-**Unverified — not yet run anywhere:** `xcodegen generate` and `xcodebuild`. There is no Xcode on the machine that wrote `project.yml`, so the Xcode project has never been generated or opened. This is the single biggest unknown in the repo, and running those two commands is the first task below.
+**Still needs a visual smoke test:** launch the generated app and confirm the menu bar icon, hidden Dock icon, and popover text. Xcode 27.0 also prints one toolchain warning from `appintentsmetadataprocessor` because the app does not link App Intents; DenTime source emits no warnings.
 
 **Not started:** every phase from 2 onward. No CloudKit container exists yet.
 
@@ -89,7 +95,7 @@ git branch -D backup-local-main     # once you have confirmed nothing was lost
 
 ## Next steps
 
-### 1. Verify the Xcode project — do this first
+### 1. Finish the Xcode visual smoke test
 
 ```bash
 brew install xcodegen
@@ -100,15 +106,15 @@ The `USER=` prefix works around XcodeGen reporting "Couldn't find current userna
 
 Then confirm:
 
-- [ ] The project opens without errors
-- [ ] `DenTimeCore` resolves as a local package dependency
-- [ ] The target builds with **zero warnings**
-- [ ] Bundle ID is `com.mrdemonwolf.dentime` with **no suffix**
+- [x] XcodeGen creates a project that `xcodebuild` loads without errors
+- [x] `DenTimeCore` resolves as a local package dependency
+- [x] The target builds with zero DenTime source warnings
+- [x] Bundle ID is `com.mrdemonwolf.dentime` with **no suffix**
 - [ ] Running it puts an icon in the menu bar with no Dock icon, and the popover shows "DenTime"
 
 If `project.yml` needs fixing, fix it there — never hand-edit the generated `.xcodeproj`, which is gitignored.
 
-You will need to set `DEVELOPMENT_TEAM` in `apps/apple/Config/Shared.xcconfig`; it is deliberately blank so a clean clone builds without signing setup.
+Debug signing is disabled in `project.yml`, so a clean clone compiles without signing setup. Release signing remains enabled; supply `DEVELOPMENT_TEAM` for archive and distribution builds.
 
 ### 2. Phase 2 — CloudKit container and schema (~3h)
 
@@ -195,7 +201,7 @@ These were decided, some of them twice. `docs/planning/DECISIONS.md` is the sour
 
 ## Key references
 
-- `CLAUDE.md` — read first in any new session; hard rules and the language table
+- `AGENTS.md` — read first in any new session; hard rules and the language table
 - `docs/planning/DECISIONS.md` — **source of truth** when documents disagree
 - `docs/planning/PHASES.md` — the twelve phases, with estimates and status
 - `docs/planning/CLOUDKIT-SCHEMA.md` — record types and the manual dashboard steps
