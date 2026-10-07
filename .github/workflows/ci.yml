@@ -65,7 +65,7 @@ jobs:
       - name: Test
         run: swift test --package-path packages/DenTimeCore
 
-  # Cheap guards for the rules in CLAUDE.md that are easy to break by accident.
+  # Cheap guards for the rules in AGENTS.md that are easy to break by accident.
   guards:
     name: Scope guards
     runs-on: ubuntu-latest

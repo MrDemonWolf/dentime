@@ -140,7 +140,7 @@ Avatars are initials on muted tints — no photos required, which is also why th
 
 Casual, warm, short. Pack and den words where natural, never forced. Sentence case everywhere except mono micro-labels.
 
-Note that the third example uses "events" — the current name for that concept is **meetup**. See the language table in [`CLAUDE.md`](../../CLAUDE.md).
+Note that the third example uses "events" — the current name for that concept is **meetup**. See the language table in [`AGENTS.md`](../../AGENTS.md).
 
 ---
 

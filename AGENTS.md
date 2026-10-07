@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-Guidance for Claude Code (claude.ai/code) working in this repository. Read this first.
+Guidance for coding agents working in this repository. Read this first.
 
 ## What DenTime is
 

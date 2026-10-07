@@ -13,7 +13,7 @@
 - [ ] No `import EventKit` and no `import StoreKit` anywhere
 - [ ] No server, no Cloudflare Workers, no D1, no Hono, no Drizzle, no Better Auth
 - [ ] Bundle ID is still `com.mrdemonwolf.dentime` with no suffix
-- [ ] Copy follows the language rules in `CLAUDE.md` — den not contacts, pack not team, host not organizer
+- [ ] Copy follows the language rules in `AGENTS.md` — den not contacts, pack not team, host not organizer
 - [ ] Blocking copy says "You won't see them", never "They can't see you"
 
 ## Notes for review

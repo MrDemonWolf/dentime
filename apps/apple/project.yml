@@ -46,6 +46,9 @@ targets:
         CODE_SIGN_ENTITLEMENTS: DenTimeMac/DenTimeMac.entitlements
         ENABLE_HARDENED_RUNTIME: YES
         ENABLE_USER_SCRIPT_SANDBOXING: YES
+      configs:
+        Debug:
+          CODE_SIGNING_ALLOWED: NO
 
 schemes:
   DenTimeMac:
